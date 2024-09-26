@@ -1,0 +1,28 @@
+{
+  "name": "eduflex_v2",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DoofenshmirtzLabs/EduFlex-inator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DoofenshmirtzLabs/EduFlex-inator/issues"
+  },
+  "homepage": "https://github.com/DoofenshmirtzLabs/EduFlex-inator#readme",
+  "dependencies": {
+    "@datastax/astra-db-ts": "^1.5.0",
+    "@google/generative-ai": "^0.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "youtube-transcript": "^1.2.1"
+  }
+}

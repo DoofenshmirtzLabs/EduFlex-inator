@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Player with Chatbot and Exam</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        #player-container {
+            width: 640px;
+            height: 360px;
+            margin-bottom: 20px;
+        }
+        #chatbot-container {
+            width: 640px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        #chat-history {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .message {
+            margin: 5px 0;
+        }
+        .user-message {
+            color: blue;
+        }
+        .system-message {
+            color: green;
+        }
+        #input-container {
+            display: flex;
+        }
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        #send-button, #take-exam-button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px; /* Space between buttons */
+        }
+        #send-button:hover, #take-exam-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="player-container"></div>
+
+    <div id="chatbot-container">
+        <div id="chat-history"></div>
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Type your message..." />
+            <button id="send-button" onclick="sendMessage()">Send</button>
+            <button id="take-exam-button" onclick="takeExam()">Take Exam</button>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="temp.js"></script>
+    <script>
+        // Define videoId globally so that it can be accessed across all functions
+        let videoId = null;
+        let videoTranscript=null;
+        let conversationHistory = [];
+
+        function onYouTubeIframeAPIReady() {
+            const urlParams = new URLSearchParams(window.location.search);
+            videoId = urlParams.get('videoId');
+             // Assign to the global variable
+            console.log("videoId",videoId)
+            if (videoId) {
+                embedYouTubeVideo(videoId);
+            } else {
+                alert('No video selected.');
+            }
+        }
+
+        function embedYouTubeVideo(videoId) {
+            new YT.Player('player-container', {
+                height: '360',
+                width: '640',
+                videoId: videoId,
+                events: {
+                    onReady: onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        // Chatbot logic
+       
+
+        
+        
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const chatHistory = document.getElementById('chat-history');
+            const prompt = userInput.value.trim();
+
+            if (prompt === '') return;
+
+             // Make sure videoId is globally accessible
+
+            // Display user's message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.textContent = `You: ${prompt}`;
+
+            chatHistory.appendChild(userMessage);
+
+            // Clear the input field
+            userInput.value = '';
+
+            try {
+                // Send the prompt to the backend API
+                const response = await fetch('http://localhost:5000/start-conversation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ userPrompt: prompt ,
+                        videoId:videoId
+                    })
+                });
+
+                const data = await response.json();
+                console.log('Response:', data);
+
+                // Display system's response
+                const systemMessage = document.createElement('div');
+                systemMessage.className = 'message system-message';
+                systemMessage.textContent = `System: ${data.response}`;
+                chatHistory.appendChild(systemMessage);
+
+                // Add the response to conversation history
+                conversationHistory.push({ user: prompt, system: data.response });
+
+                // Scroll to the bottom of chat history
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            } catch (error) {
+                console.error('Error generating content:', error);
+
+                // Display error message
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'message system-message';
+                errorMessage.textContent = 'System: Error generating content. Please try again later.';
+                chatHistory.appendChild(errorMessage);
+            }
+        }
+
+        function takeExam() {
+            // Redirect to exam.html
+            window.location.href = `exampage.html?videoId=${videoId}`;
+        }
+    </script>
+
+</body>
+</html>

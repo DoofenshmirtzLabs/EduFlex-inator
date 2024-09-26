@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        #exam-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 5px 0;
+            cursor: pointer;
+            padding: 10px;
+            background: #e7e7e7;
+            border-radius: 4px;
+        }
+        .options li:hover {
+            background: #d7d7d7;
+        }
+        .selected {
+            background: #007bff;
+            color: white;
+        }
+        #submit-exam-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #submit-exam-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="exam-container">
+        <h2>Exam Questions</h2>
+        <div id="exam-question" class="question"></div>
+        <ul id="exam-options" class="options"></ul>
+        <button id="submit-exam-button" onclick="submitExam()">Submit</button>
+        <div id="score" style="text-align: center; margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        let videoId = null;
+        const questions = []; // Will hold the questions fetched from the server
+        let currentQuestionIndex = 0;
+        let score = 0; // Variable to hold the score
+
+        // Function to get videoId from URL
+        function getVideoIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('videoId');
+        }
+
+        // Function to fetch exam data from the server
+        async function fetchExam() {
+            try {
+                const response = await fetch('http://localhost:5000/generate-mcq', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ videoId: videoId, numQuestions: 5, difficultyLevel: "medium" })
+                });
+                const examData = await response.json();
+                questions.push(...examData);
+                displayQuestion();
+            } catch (error) {
+                console.error('Error fetching exam:', error);
+                alert('Failed to load exam questions. Please try again.');
+            }
+        }
+
+        // Function to display a question
+        function displayQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const question = questions[currentQuestionIndex].question;
+                const questionElement = document.getElementById('exam-question');
+                const optionsElement = document.getElementById('exam-options');
+
+                questionElement.textContent = question.text;
+                optionsElement.innerHTML = "";
+
+                question.options.forEach(option => {
+                    const optionElement = document.createElement("li");
+                    optionElement.textContent = option.text;
+                    optionElement.setAttribute('data-option-id', option.id); // Set option id
+                    optionElement.onclick = () => selectOption(optionElement, option.id);
+                    optionsElement.appendChild(optionElement);
+                });
+            } else {
+                displayScore(); // Display the score after the last question
+            }
+        }
+
+        // Function to select an option
+        function selectOption(selectedElement, optionId) {
+            const options = document.querySelectorAll('.options li');
+            options.forEach(option => option.classList.remove('selected'));
+            selectedElement.classList.add('selected');
+            // Store the selected option if needed
+        }
+
+        // Function to submit the exam
+        function submitExam() {
+            const selectedOption = document.querySelector('.options li.selected');
+            if (!selectedOption) {
+                alert('Please select an answer before submitting.');
+                return;
+            }
+
+            // Check if the answer is correct
+            const correctOptionId = questions[currentQuestionIndex].question.correctOptionId;
+            if (selectedOption.getAttribute('data-option-id') === correctOptionId) {
+                score++;
+            }
+
+            // Move to the next question
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        // Function to display the final score
+        function displayScore() {
+            const scoreElement = document.getElementById('score');
+            scoreElement.textContent = `You scored ${score} out of ${questions.length}`;
+            document.getElementById('exam-question').style.display = 'none';
+            document.getElementById('exam-options').style.display = 'none';
+            document.getElementById('submit-exam-button').style.display = 'none';
+        }
+
+        // Combine both getting the videoId and fetching the exam in one window.onload
+        window.onload = function() {
+            // Get the video ID from the URL
+            videoId = getVideoIdFromUrl();
+            console.log("Video ID:", videoId); // Now videoId is available
+
+            // Fetch the exam data once videoId is retrieved
+            fetchExam();
+        };
+    </script>
+
+</body>
+</html>
