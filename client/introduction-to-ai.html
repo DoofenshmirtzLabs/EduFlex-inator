@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,211 +11,233 @@
             font-family: Arial, sans-serif;
             padding: 20px;
             background-color: #f4f4f4;
+            display: flex;
         }
-        #search-container {
+
+        /* Left container for modules */
+        #left-container {
+            width: 25%;
+            padding-right: 20px;
+            border-right: 2px solid #ddd;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        #left-container h2 {
+            margin-bottom: 10px;
+        }
+
+        /* Style for each module list */
+        .module {
             margin-bottom: 20px;
         }
+
+        .module ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .module li {
+            margin-bottom: 10px;
+        }
+
+        .module a {
+            color: #3b82f6;
+            text-decoration: none;
+            padding: 5px 0;
+            display: block;
+        }
+
+        .module a:hover {
+            background-color: #e0e7ff;
+            padding-left: 5px;
+        }
+
+        /* Right container for thumbnails */
+        #right-container {
+            width: 75%;
+            padding-left: 20px;
+        }
+
         #thumbnails-container {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 10px;
         }
+
         .thumbnail {
             cursor: pointer;
             border: 1px solid #ddd;
             padding: 5px;
             background-color: #fff;
             transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
         .thumbnail:hover {
             background-color: #eee;
         }
+
         .thumbnail img {
-            width: 100%;
+            width: 120px;
             height: auto;
         }
+
         .video-title {
             font-size: 14px;
-            margin-top: 5px;
-        }
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #f9f9f9;
-            min-width: 250px;
-            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-            padding: 12px 16px;
-            z-index: 1;
-            border-radius: 8px;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-        }
-
-        .dropdown-content a {
-            color: #000;
-            text-decoration: none;
-            display: block;
-            padding: 8px 0;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .dropdown-content a:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #e0e7ff; /* Light blue hover effect */
-        }
-
-        .dropdown-button {
-            background-color: #3b82f6; /* Blue button */
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .dropdown-button:hover {
-            background-color: #2563eb; /* Darker blue on hover */
         }
     </style>
 </head>
+
 <body>
-    <!-- Module: Introduction and Applications of AI -->
-    <div class="module">
-        <div class="dropdown">
-            <button class="dropdown-button">Introduction and Applications of AI</button>
-            <div class="dropdown-content">
-                <a href="#introducing-ai" id="introducing-ai" onclick="handleLinkClick(event)">Introducing AI</a>
-                <a href="#ai-vs-augmented-intelligence" id="ai-vs-augmented-intelligence" onclick="handleLinkClick(event)">Artificial Intelligence vs. Augmented Intelligence</a>
-                <a href="#generative-ai-use-cases" id="generative-ai-use-cases" onclick="handleLinkClick(event)">Introducing Generative AI and Its Use Cases</a>
-                <a href="#evolution-of-ai" id="evolution-of-ai" onclick="handleLinkClick(event)">The Evolution of AI: Traditional AI vs. Generative AI</a>
-                <a href="#ai-are-we-there-yet" id="ai-are-we-there-yet" onclick="handleLinkClick(event)">Artificial Intelligence - Are We There Yet?</a>
-                <a href="#ai-in-daily-life" id="ai-in-daily-life" onclick="handleLinkClick(event)">AI in Daily Life</a>
-                <a href="#ai-chatbots-smart-assistants" id="ai-chatbots-smart-assistants" onclick="handleLinkClick(event)">AI Chatbots and Smart Assistants</a>
-                <a href="#what-is-a-chatbot" id="what-is-a-chatbot" onclick="handleLinkClick(event)">What is a Chatbot?</a>
-                <a href="#ai-in-industries" id="ai-in-industries" onclick="handleLinkClick(event)">Applications of AI in Different Industries</a>
-                <a href="#generative-ai-tools" id="generative-ai-tools" onclick="handleLinkClick(event)">Generative AI Tools and Applications</a>
-                <a href="#everyday-ai-use-cases" id="everyday-ai-use-cases" onclick="handleLinkClick(event)">Ten Everyday AI and Machine Learning Use Cases</a>
-            </div>
+    <!-- Left Side: Modules and Topics -->
+    <div id="left-container">
+        <h2>Modules</h2>
+
+        
+        <div class="module">
+            <h3>Introduction and Applications of AI</h3>
+            <ul>
+                <li><a href="#introducing-ai" id="introducing-ai" onclick="handleLinkClick(event)">Introducing AI</a></li>
+                <li><a href="#ai-vs-augmented-intelligence" id="ai-vs-augmented-intelligence" onclick="handleLinkClick(event)">Artificial Intelligence vs. Augmented Intelligence</a></li>
+                <li><a href="#generative-ai-use-cases" id="generative-ai-use-cases" onclick="handleLinkClick(event)">Introducing Generative AI and Its Use Cases</a></li>
+                <li><a href="#evolution-of-ai" id="evolution-of-ai" onclick="handleLinkClick(event)">The Evolution of AI</a></li>
+                <li><a href="#ai-are-we-there-yet" id="ai-are-we-there-yet" onclick="handleLinkClick(event)">Artificial Intelligence - Are We There Yet?</a></li>
+            </ul>
+        </div>
+
+        <!-- Module: AI Concepts, Terminology, and Application Domains -->
+        <div class="module">
+            <h3>AI Concepts, Terminology, and Application Domains</h3>
+            <ul>
+                <li><a href="#cognitive-computing" id="cognitive-computing" onclick="handleLinkClick(event)">Cognitive Computing</a></li>
+                <li><a href="#ai-terminologies" id="ai-terminologies" onclick="handleLinkClick(event)">Terminologies and Related Concepts of AI</a></li>
+                <li><a href="#machine-learning" id="machine-learning" onclick="handleLinkClick(event)">Machine Learning</a></li>
+                <li><a href="#deep-learning" id="deep-learning" onclick="handleLinkClick(event)">Deep Learning</a></li>
+            </ul>
         </div>
     </div>
 
-    <!-- Module: AI Concepts, Terminology, and Application Domains -->
-    <div class="module">
-        <div class="dropdown">
-            <button class="dropdown-button">AI Concepts, Terminology, and Application Domains</button>
-            <div class="dropdown-content">
-                <a href="#cognitive-computing" id="cognitive-computing" onclick="handleLinkClick(event)">Cognitive Computing</a>
-                <a href="#ai-terminologies" id="ai-terminologies" onclick="handleLinkClick(event)">Terminologies and Related Concepts of AI</a>
-                <a href="#machine-learning" id="machine-learning" onclick="handleLinkClick(event)">Machine Learning</a>
-                <a href="#ml-techniques-training" id="ml-techniques-training" onclick="handleLinkClick(event)">Machine Learning: Techniques and Training</a>
-                <a href="#deep-learning" id="deep-learning" onclick="handleLinkClick(event)">Deep Learning</a>
-                <a href="#neural-networks" id="neural-networks" onclick="handleLinkClick(event)">Neural Networks</a>
-                <a href="#ml-vs-dl" id="ml-vs-dl" onclick="handleLinkClick(event)">Machine Learning vs Deep Learning</a>
-                <a href="#generative-ai-models" id="generative-ai-models" onclick="handleLinkClick(event)">Generative AI Models</a>
-                <a href="#large-language-models" id="large-language-models" onclick="handleLinkClick(event)">Large Language Models</a>
-                <a href="#ml-dl-foundation-models" id="ml-dl-foundation-models" onclick="handleLinkClick(event)">Machine Learning vs. Deep Learning vs. Foundation Models</a>
-                <a href="#nlp-speech-vision" id="nlp-speech-vision" onclick="handleLinkClick(event)">Natural Language Processing, Speech, and Computer Vision</a>
-                <a href="#what-is-nlp" id="what-is-nlp" onclick="handleLinkClick(event)">What Is NLP (Natural Language Processing)?</a>
-                <a href="#self-driving-cars" id="self-driving-cars" onclick="handleLinkClick(event)">Self Driving Cars</a>
-                <a href="#ai-cloud-computing" id="ai-cloud-computing" onclick="handleLinkClick(event)">AI and Cloud Computing, Edge Computing, and IoT</a>
-            </div>
-        </div>
+    <!-- Right Side: Video Thumbnails -->
+    <div id="right-container">
+        <div id="thumbnails-container"></div>
     </div>
-    
 
-
-
-    <div id="thumbnails-container"></div>
-  
     <script>
          window.addEventListener("DOMContentLoaded", function () {
-            // Get the current URL hash
             const urlHash = window.location.hash;
-    
-            // If there's a hash, process it
             if (urlHash) {
                 const topicId = urlHash.substring(1); // Remove the leading '#'
-    
-                // Find the element with the matching ID
                 const topicElement = document.getElementById(topicId);
+                console.log("topicelement",topicElement);
                 if (topicElement) {
-                    // Get the dropdown content (the parent of the topic)
-                    const dropdownContent = topicElement.closest('.dropdown-content');
-                    if (dropdownContent) {
-                        // Open the dropdown by adding a class (you can adjust this to suit your CSS)
-                        dropdownContent.style.display = 'block';
-    
-                        // Scroll to the topic
-                        topicElement.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
+                    topicElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                    searchYouTubeVideos(topicElement.textContent.trim()); // Fetch videos for the topic in URL
+                }
+            } else {
+                // Load videos for the first topic in the first module by default
+                const firstTopicElement = document.querySelector('#left-container .module ul li a');
+                
+                console.log("first topic element",firstTopicElement);
+                if (firstTopicElement) {
+                    const firstTopicId = firstTopicElement.getAttribute('href').substring(1); 
+                    searchYouTubeVideos(firstTopicId);
                 }
             }
         });
-
         function handleLinkClick(event) {
-                event.preventDefault(); // Prevent default anchor click behavior
-                const searchQuery = event.target.textContent.trim(); // Extract text content from clicked link
-                console.log("searchquery1 for youtube:",searchQuery)
-                
-                searchYouTubeVideos(searchQuery); // Pass the extracted text to the search function
-            }
+            event.preventDefault();
+            const searchQuery = event.target.textContent.trim();
+            searchYouTubeVideos(searchQuery);
+        }
 
         async function searchYouTubeVideos(searchQuery) {
-            
-            const apiKey = 'AIzaSyAalKwhBlFVNN7xCIT4tCGFVNwETZhFaPM'; // Replace with your YouTube API key
-            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&maxResults=10&key=${apiKey}`;
+    const apiKey = 'AIzaSyAalKwhBlFVNN7xCIT4tCGFVNwETZhFaPM'; // Replace with your YouTube API key
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&maxResults=20&key=${apiKey}`;
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                displayThumbnails(data.items);
-            } catch (error) {
-                console.error('Error fetching YouTube data:', error);
-            }
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Filter videos to check validity before displaying
+        const validVideos = await checkVideoValidity(data.items);
+        displayThumbnails(validVideos);
+    } catch (error) {
+        console.error('Error fetching YouTube data:', error);
+    }
+}
+
+// Function to check the validity of each video
+async function checkVideoValidity(videos) {
+    const validVideos = [];
+
+    for (const item of videos) {
+        const videoId = item.id.videoId;
+
+        // Check if the video is accessible
+        const isValid = await isVideoAccessible(videoId);
+        if (isValid) {
+            validVideos.push(item);
         }
+    }
 
-        function displayThumbnails(videos) {
-            const container = document.getElementById('thumbnails-container');
-            container.innerHTML = '';
+    return validVideos;
+}
 
-            videos.forEach((item) => {
-                const videoId = item.id.videoId;
-                const title = item.snippet.title;
-                const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+// Function to check if a video is accessible
+async function isVideoAccessible(videoId) {
+    const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=AIzaSyAalKwhBlFVNN7xCIT4tCGFVNwETZhFaPM&part=status`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        // Check if the video status is 'ok'
+        return data.items.length > 0 && data.items[0].status.privacyStatus !== 'private';
+    } catch (error) {
+        console.error('Error checking video validity:', error);
+        return false; // If there's an error, consider it invalid
+    }
+}
 
-                const thumbnailDiv = document.createElement('div');
-                thumbnailDiv.className = 'thumbnail';
-                thumbnailDiv.onclick = () => {
-                    window.location.href = `video_page.html?videoId=${videoId}`;
-                };
+function displayThumbnails(videos) {
+    const container = document.getElementById('thumbnails-container');
+    container.innerHTML = '';
 
-                const img = document.createElement('img');
-                img.src = thumbnailUrl;
-                img.alt = title;
+    if (videos.length === 0) {
+        const noVideosMessage = document.createElement('div');
+        noVideosMessage.textContent = 'No valid videos found.';
+        container.appendChild(noVideosMessage);
+        return;
+    }
 
-                const videoTitle = document.createElement('div');
-                videoTitle.className = 'video-title';
-                videoTitle.textContent = title;
+    videos.forEach((item) => {
+        const videoId = item.id.videoId;
+        const title = item.snippet.title;
+        const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
 
-                thumbnailDiv.appendChild(img);
-                thumbnailDiv.appendChild(videoTitle);
-                container.appendChild(thumbnailDiv);
-            });
-        }
+        const thumbnailDiv = document.createElement('div');
+        thumbnailDiv.className = 'thumbnail';
+        thumbnailDiv.onclick = () => {
+            window.location.href = `video_page.html?videoId=${videoId}`;
+        };
+
+        const img = document.createElement('img');
+        img.src = thumbnailUrl;
+        img.alt = title;
+
+        const videoTitle = document.createElement('div');
+        videoTitle.className = 'video-title';
+        videoTitle.textContent = title;
+
+        thumbnailDiv.appendChild(img);
+        thumbnailDiv.appendChild(videoTitle);
+        container.appendChild(thumbnailDiv);
+    });
+}
+
     </script>
-   
-    
-
 </body>
+
 </html>
