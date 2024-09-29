@@ -5,7 +5,10 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import dotenv from 'dotenv';
 import {transcript} from './tools/temp.js';
+
+import { coursesData } from './tools/topics.js';
 dotenv.config();
+
 
 
 // Initialize database client
@@ -30,6 +33,10 @@ const port = 5000;
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Body parser to parse JSON requests
 
+
+
+// Static Files (your existing front-end files)
+app.use(express.static('public'));
 let conversationHistory = [];
 
 
@@ -46,6 +53,51 @@ async function semanticsearch(userinput) {
   const results = await cursor.toArray(); // Get the matching documents as an array
   return results
 }
+async function decideToolWithGemini(userInput, apiKey) {
+  const genAI = new GoogleGenerativeAI(apiKey);
+  try {
+    const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash', temperature: 0 });
+    
+    const context = `
+      You are a tool manager that decides which tool to use based on the user's input: ${userInput}.
+      Select one of the following tools:
+        Tool 1: Semantic search (requires a topic name as input).
+        Tool 2: Create a custom exam (requires a topic name, number of questions, and difficulty level - 'easy', 'medium', 'hard').
+      Return a valid JSON response with two fields: 'tool' and 'input'. (Very important: do not include any tick symbols or the word 'json' inside the text field in the response).
+      Example response:
+      {
+        "tool": 2,
+        "input": {
+          "topic": "Quantum Physics",
+          "num_questions": 10,
+          "difficulty": "medium"
+        }
+      }
+    `;
+
+    console.log("Context:", context);
+    
+    const result = await model.generateContent(context);
+
+    // Ensure the response is awaited properly
+    const responseText = await result.response.text();
+    console.log("Raw response text:", responseText);
+
+    // Parse the response to JSON
+    const parsedResult = JSON.parse(responseText);
+    console.log("Parsed result:", parsedResult);
+
+    // Output the tool decision and processed input
+    console.log('Selected Tool:', parsedResult.tool);
+    console.log('Processed Input:', JSON.stringify(parsedResult.input, null, 2));
+
+    return parsedResult;
+  } catch (error) {
+    console.error('Error generating content:', error);
+    throw new Error('Content generation failed');
+  }
+}
+
 async function fetchtopicname(videoId) {
   console.log("videoid:",videoId)
   const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${YOUTUBE_API_KEY}&part=snippet`;
@@ -77,7 +129,7 @@ async function fetchtopicname(videoId) {
 async function generateContent(prompt, context) {
   const genAI = new GoogleGenerativeAI(apiKey);
   try {
-    const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-pro-002' });
     const updatedPrompt = `${context}\n${prompt}`;
     const result = await model.generateContent(updatedPrompt);
 
@@ -114,8 +166,8 @@ async function fetchEnglishTranscript(videoId) {
 async function generateMCQTest(videoId, numQuestions, difficultyLevel) {
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  currenttopicname=fetchtopicname(videoId)
-  console.log(currenttopicname)
+  currenttopicname=await transcript(videoId);
+  console.log("current topic name in server",currenttopicname)
   const prompt = `
     Create an MCQ test based on the following specifications:
     - Topic: ${currenttopicname}
@@ -143,14 +195,68 @@ async function generateMCQTest(videoId, numQuestions, difficultyLevel) {
 
   try {
     const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    console.log(prompt)
     const result = await model.generateContent(prompt);
-    
+    console.log("result",result)
     let responseText = result.response.text().trim();
     responseText = responseText.replace(/```json|```/g, "").trim();
     
     const generatedResponse = JSON.parse(responseText);
     console.log("generatedresponse:",generatedResponse)
     return generatedResponse;
+  } catch (error) {
+    console.error("Error generating MCQ test:", error);
+    throw new Error('MCQ generation failed');
+  }
+}
+async function generateMCQTestwithtopics(topics, numQuestions, difficultyLevel) {
+  const genAI = new GoogleGenerativeAI(apiKey);
+  
+  console.log("Current topic name in server:", topics);
+  const prompt = `
+    Create an MCQ test based on the following specifications:
+    - Topic: ${topics}
+    - Number of questions: ${numQuestions}
+    - Difficulty level: ${difficultyLevel} (easy, medium, hard)
+
+    (very important :For each question, provide the following format:
+    {
+      "question": {
+        "id": "q1",
+        "text": "Your question text here",
+        "options": [
+          { "id": "o1", "text": "Option 1" },
+          { "id": "o2", "text": "Option 2" },
+          { "id": "o3", "text": "Option 3" },
+          { "id": "o4", "text": "Option 4" }
+        ],
+        "answer": {
+          "optionId": "correct_option_id",
+          "text": "Correct answer text"
+        }
+      }
+    }
+  `;
+
+  try {
+    const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    console.log("Generated Prompt:", prompt);
+    
+    const result = await model.generateContent(prompt);
+    console.log("Raw Result:", result);
+    
+    let responseText = result.response.text().trim();
+    responseText = responseText.replace(/```json|```/g, "").trim();
+
+    try {
+      const generatedResponse = JSON.parse(responseText);
+      console.log("Generated Response:", JSON.stringify(generatedResponse, null, 2));
+      return generatedResponse;
+    } catch (jsonError) {
+      console.error("Error parsing JSON response:", jsonError);
+      throw new Error('Invalid JSON response from MCQ generation');
+    }
+    
   } catch (error) {
     console.error("Error generating MCQ test:", error);
     throw new Error('MCQ generation failed');
@@ -169,6 +275,58 @@ async function transcripttocontext(videoId) {
     console.error("Error in transcripttocontext:", error);
   }
 }
+async function generatecustomMCQTest(toolInputs){
+  const genAI = new GoogleGenerativeAI(apiKey);
+ 
+  
+  const prompt = `
+    Create an MCQ test based on the following specifications:
+    ${toolInputs}
+
+    For each question, provide the following format:
+    {
+      "question": {
+        "id": "q1",
+        "text": "Your question text here",
+        "options": [
+          { "id": "o1", "text": "Option 1" },
+          { "id": "o2", "text": "Option 2" },
+          { "id": "o3", "text": "Option 3" },
+          { "id": "o4", "text": "Option 4" }
+        ],
+        "answer": {
+          "optionId": "correct_option_id",
+          "text": "Correct answer text"
+        }
+      }
+    }
+  `
+  try {
+    const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    console.log(prompt)
+    const result = await model.generateContent(prompt);
+    console.log("result",result)
+    let responseText = result.response.text().trim();
+    responseText = responseText.replace(/```json|```/g, "").trim();
+    
+    const generatedResponse = JSON.parse(responseText);
+    console.log("generatedresponse:",generatedResponse)
+    return generatedResponse;
+  } catch (error) {
+    console.error("Error generating MCQ test:", error);
+    throw new Error('MCQ generation failed');
+  }
+
+
+}
+
+async function gettopics(coursename){
+  console.log(coursename)
+  console.log("trying to get courseDATA")
+  return coursesData[coursename] ? coursesData[coursename].topics : [];
+}
+
+
 app.post('/transcripttocontext', async (req, res) => {
   const { videoId } = req.body;
   try {
@@ -195,7 +353,70 @@ app.post('/generate-mcq', async (req, res) => {
     res.status(500).json({ error: 'Failed to generate MCQ test', details: error.message });
   }
 });
+app.post('/agent', async (req, res) => {
+  const { userInput } = req.body;
+  console.log("user input in server:", userInput);
 
+  try {
+    // Call your decideToolWithGemini function
+    const toolDecision = await decideToolWithGemini(userInput, apiKey);
+    
+    // If toolDecision is undefined or null, handle it as an error
+    if (!toolDecision) {
+      throw new Error("No tool decision returned.");
+    }
+
+    console.log("result in agent:", toolDecision);
+
+    // Send the result back to the client as JSON
+    return res.json(toolDecision);  // Use res.json() to send JSON response
+  } catch (error) {
+    console.log("Error deciding the tool usage:", error);
+    
+    // Return a 500 error with a message to the client
+    return res.status(500).json({ error: "An error occurred while deciding the tool." });
+  }
+});
+app.post('/generate-custom-mcq',async(req,res)=>{
+  const{toolInputs}=req.body;
+  try {
+    
+    const mcqTest = await generatecustomMCQTest(toolInputs);
+    res.json(mcqTest);
+  } catch (error) {
+    console.error("MCQ Generation Error:", error);
+    res.status(500).json({ error: 'Failed to generate MCQ test', details: error.message });
+  }
+
+})
+
+app.post('/generate-mcq-finalexam', async (req, res) => {
+  const { topics, numQuestions, difficultyLevel } = req.body;
+
+  try {
+    // Logging the input values to verify the request data
+    console.log("Topics in server:", topics);
+    console.log("Number of Questions:", numQuestions);
+    console.log("Difficulty Level:", difficultyLevel);
+
+    // Ensure all required fields are provided
+    if (!topics || !numQuestions || !difficultyLevel) {
+      return res.status(400).json({ error: "Missing required fields: topics, numQuestions, or difficultyLevel." });
+    }
+
+    // Assuming generateMCQTestwithtopics is a valid function that returns an MCQ test based on inputs
+    const mcqTest = await generateMCQTestwithtopics(topics, numQuestions, difficultyLevel);
+    
+    // Return the generated MCQ test
+    console.log("mcqtest in server:",mcqTest)
+    res.json(mcqTest);
+  } catch (error) {
+    console.error("MCQ Generation Error:", error);
+
+    // Send an error response with the error message
+    res.status(500).json({ error: "Failed to generate MCQ test", details: error.message });
+  }
+});
 // Endpoint to start a conversation
 
 app.post('/start-conversation', async (req, res) => {
@@ -267,6 +488,20 @@ app.post('/fetchEnglishTranscript', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch transcript', details: error.message });
   }
 });
+app.post('/get-topics',async(req,res)=>{
+
+  const {courseName}=req.body
+  console.log("called get topics",courseName)
+  try{
+    const topics= await gettopics(courseName);
+    console.log("topics in get-topics server:",topics)
+    res.json(topics)
+  }
+
+catch(error){
+  console.log("error fetching the topics:",error)
+}
+})
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

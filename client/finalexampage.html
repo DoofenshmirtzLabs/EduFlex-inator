@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        #exam-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 5px 0;
+            cursor: pointer;
+            padding: 10px;
+            background: #e7e7e7;
+            border-radius: 4px;
+        }
+        .options li:hover {
+            background: #d7d7d7;
+        }
+        .selected {
+            background: #007bff;
+            color: white;
+        }
+        #submit-exam-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #submit-exam-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Add this element to display the course title -->
+    <h1 id="course-title"></h1>
+
+    <div id="exam-container">
+        <h2>Exam Questions</h2>
+        <div id="exam-question" class="question"></div>
+        <ul id="exam-options" class="options"></ul>
+        <button id="submit-exam-button" onclick="submitExam()">Submit</button>
+        <div id="score" style="text-align: center; margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        let questions = []; // Will hold the questions fetched from the server
+        let currentQuestionIndex = 0;
+        let score = 0; // Variable to hold the score
+
+        // Function to fetch exam data from the server
+        async function fetchExamWithTopics(topics) {
+            console.log("inside topics function");
+            const num = Array.isArray(topics) ? 2 * topics.length : 0;
+            console.log("topics:", topics);
+            console.log("num", num);
+            try {
+                const response = await fetch('http://localhost:5000/generate-mcq-finalexam', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ topics: topics, numQuestions: num, difficultyLevel: "medium" })
+                });
+                const examData = await response.json();
+                console.log("exam data",examData)
+                // Check if examData is in the expected format
+                if (Array.isArray(examData) && examData.length > 0) {
+                    questions.push(...examData);
+                    displayQuestion();
+                } else {
+                    console.error('Invalid exam data format:', examData);
+                    alert('No questions available for the selected topics.');
+                }
+            } catch (error) {
+                console.error('Error fetching exam:', error);
+                alert('Failed to load exam questions. Please try again.');
+            }
+        }
+
+        // Function to display a question
+        function displayQuestion() {
+    if (currentQuestionIndex < questions.length) {
+        const question = questions[currentQuestionIndex];
+        const questionElement = document.getElementById('exam-question');
+        const optionsElement = document.getElementById('exam-options');
+
+        // Display question text
+        questionElement.textContent = question.question.text;
+        optionsElement.innerHTML = "";  // Clear previous options
+
+        // Check if options exist and if it's an array
+        if (Array.isArray(question.question.options)) {
+            question.question.options.forEach(option => {
+                // Log the option to verify its structure
+                console.log('Option:', option);
+                
+                // Check if option has 'text' property
+                if (option && option.text) {
+                    const optionElement = document.createElement("li");
+                    console.log(1)
+                    optionElement.textContent = option.text;  // Set option text
+                    console.log(2)
+                    optionElement.setAttribute('data-option-id', option.id);  // Set option id
+                    optionElement.onclick = () => selectOption(optionElement, option.id);  // Select handler
+                    optionsElement.appendChild(optionElement);  // Add to options list
+                } else {
+                    console.error("Option missing text property:", option);
+                }
+            });
+        } else {
+            console.error("Options is not a valid array:", question.question.options);
+        }
+    } else {
+        displayScore();  // If no more questions, display the final score
+    }
+}
+
+        // Function to select an option
+        function selectOption(selectedElement) {
+            const options = document.querySelectorAll('.options li');
+            options.forEach(option => option.classList.remove('selected'));
+            selectedElement.classList.add('selected');
+        }
+
+        // Function to submit the exam
+        function submitExam() {
+            const selectedOption = document.querySelector('.options li.selected');
+            if (!selectedOption) {
+                alert('Please select an answer before submitting.');
+                return;
+            }
+
+            // Check if the answer is correct
+            const correctOptionId = questions[currentQuestionIndex].question.answer.optionId;
+            if (selectedOption.getAttribute('data-option-id') === String(correctOptionId)) {
+                score++;
+            }
+
+            // Move to the next question
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        // Function to display the final score
+        function displayScore() {
+            const scoreElement = document.getElementById('score');
+            scoreElement.textContent = `You scored ${score} out of ${questions.length}`;
+            document.getElementById('exam-question').style.display = 'none';
+            document.getElementById('exam-options').style.display = 'none';
+            document.getElementById('submit-exam-button').style.display = 'none';
+        }
+
+        // Function to get course name from URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Function to fetch topics based on the course name
+        async function fetchTopicsForCourse(courseName) {
+            const baseUrl = 'http://localhost:5000';
+            try {
+                const response = await fetch(`${baseUrl}/get-topics`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ courseName: courseName }), // Ensure it's 'userInput' in the body
+                });
+                const topics = await response.json();
+                console.log("Fetched topics:", topics);
+                await fetchExamWithTopics(topics);
+            } catch (error) {
+                console.error('Error fetching topics:', error);
+            }
+        }
+
+        // Combine both getting the course name and fetching the exam in one window.onload
+        window.addEventListener('DOMContentLoaded', function () {
+            const courseName = decodeURIComponent(getQueryParam('courseName'));
+            console.log("course name in final exam page:", courseName);
+            if (courseName) {
+                document.getElementById('course-title').textContent = `Course: ${courseName}`;
+                fetchTopicsForCourse(courseName);
+            } else {
+                document.getElementById('course-title').textContent = 'Course: Not found';
+            }
+        });
+    </script>
+
+</body>
+</html>

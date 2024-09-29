@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>EduFlex Certificate</title>
+        <style type='text/css'>
+            body, html {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                color: black;
+                display: table;
+                font-family: Georgia, serif;
+                font-size: 24px;
+                text-align: center;
+            }
+            .container {
+                border: 20px solid tan;
+                width: 750px;
+                height: 563px;
+                display: table-cell;
+                vertical-align: middle;
+                padding: 20px;
+            }
+            .logo {
+                margin-bottom: 20px;
+            }
+            .logo img {
+                width: 200px; /* Adjusted logo width */
+                height: auto;
+            }
+            .marquee {
+                color: tan;
+                font-size: 48px;
+                margin: 20px;
+            }
+            .assignment {
+                margin: 20px;
+            }
+            .person {
+                border-bottom: 2px solid black;
+                font-size: 32px;
+                font-style: italic;
+                margin: 20px auto;
+                width: 400px;
+            }
+            .reason {
+                margin: 20px;
+            }
+            .download-btn {
+                margin-top: 20px;
+                padding: 10px 20px;
+                background-color: tan;
+                border: none;
+                cursor: pointer;
+                font-size: 18px;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container" id="certificate">
+            <div class="logo">
+                <img src="C:\Users\user\EduFlex_v2\logo-Eduflex-transformed (1).png" alt="EduFlex logo">
+            </div>
+
+            <div class="marquee" id="certificateTitle">
+                Certificate of Completion
+            </div>
+
+            <div class="assignment">
+                This certificate is presented to
+            </div>
+
+            <div class="person" id="personName">
+                Joe Nathan
+            </div>
+
+            <div class="reason" id="reasonText">
+                For deftly defying the laws of gravity<br/>
+                and flying high
+            </div>
+        </div>
+
+        <button class="download-btn" onclick="downloadCertificate()">Download as PDF</button>
+
+        <!-- Include jsPDF and html2canvas -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+        <script>
+            function updateCertificate(userName, courseName, reason) {
+                document.getElementById('personName').innerText = userName;
+                document.getElementById('certificateTitle').innerText = `Certificate of Completion for ${courseName}`;
+                document.getElementById('reasonText').innerHTML = reason;
+            }
+
+            // Example: Dynamically update certificate
+            const userName = "John Doe";  // Replace with actual user input
+            const courseName = "Machine Learning Basics";  // Replace with actual course name
+            const reason = "For successfully completing the Machine Learning Basics course and mastering foundational concepts.";
+
+            updateCertificate(userName, courseName, reason);
+
+            // Function to download the certificate as PDF
+            function downloadCertificate() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'px',
+                    format: [750, 563]
+                });
+
+                html2canvas(document.getElementById('certificate')).then((canvas) => {
+                    const imgData = canvas.toDataURL('image/png');
+                    doc.addImage(imgData, 'PNG', 0, 0, 750, 563);
+                    doc.save('certificate.pdf');  // Download the PDF
+                });
+            }
+        </script>
+    </body>
+</html>

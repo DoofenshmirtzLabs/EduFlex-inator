@@ -126,27 +126,31 @@
             const options = document.querySelectorAll('.options li');
             options.forEach(option => option.classList.remove('selected'));
             selectedElement.classList.add('selected');
+            console.log("selected option:",selectedElement);
             // Store the selected option if needed
         }
 
         // Function to submit the exam
         function submitExam() {
-            const selectedOption = document.querySelector('.options li.selected');
-            if (!selectedOption) {
-                alert('Please select an answer before submitting.');
-                return;
-            }
+    const selectedOption = document.querySelector('.options li.selected');
+    if (!selectedOption) {
+        alert('Please select an answer before submitting.');
+        return;
+    }
 
-            // Check if the answer is correct
-            const correctOptionId = questions[currentQuestionIndex].question.correctOptionId;
-            if (selectedOption.getAttribute('data-option-id') === correctOptionId) {
-                score++;
-            }
+    // Check if the answer is correct
+    const correctOptionId = questions[currentQuestionIndex].question.answer.optionId;
+    console.log("correctoptionid",correctOptionId);
+    console.log("selected option :",selectedOption.getAttribute('data-option-id'))
+    // Convert both to strings for comparison or convert them to numbers, either way will work
+    if (selectedOption.getAttribute('data-option-id') === String(correctOptionId)) {
+        score++;
+    }
 
-            // Move to the next question
-            currentQuestionIndex++;
-            displayQuestion();
-        }
+    // Move to the next question
+    currentQuestionIndex++;
+    displayQuestion();
+}
 
         // Function to display the final score
         function displayScore() {

@@ -144,11 +144,51 @@
 searchBar.addEventListener('keypress', (event) => {
   if (event.key === 'Enter') {
     const userInput = searchBar.value;
-    performSearch(userInput);
+    agent(userInput);
   }
 });
 
+async function agent(userInput) {
+  console.log("userinput in index", userInput);
+  const baseUrl = 'http://localhost:5000'; // Default if not set
 
+  try {
+    const response = await fetch(`${baseUrl}/agent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userInput: userInput }), // Ensure it's 'userInput' in the body
+    });
+    console.log("response from server",response)
+
+    // Check if the response is successful
+    if (!response.ok) {
+      throw new Error(`Error fetching results: ${response.statusText}`);
+    }
+
+    // Parse the JSON response
+    const parsedResult = await response.json(); // Correctly parsing the JSON
+    console.log("Parsed result:", parsedResult);
+
+    const toolNumber = parsedResult.tool;
+    console.log("Tool number in index:", toolNumber);
+    const toolInput = JSON.stringify(parsedResult.input, null, 2);
+    console.log("Tool input:", toolInput);
+
+    // Conditional logic based on the tool number
+    if (toolNumber === 1) {
+      console.log("Calling semantic search");
+      performSearch(toolInput); // Assuming you have this function defined
+    } else if (toolNumber === 2) {
+      console.log("Calling custom exam");
+      createcustomexam(toolInput); // Assuming you have this function defined
+    }
+  } catch (error) {
+    console.error("Error in agent function:", error);
+  }
+}
+async function createcustomexam(toolInput){
+  window.location.href = `customexampage.html?toolinputs=${toolInput}`;
+}
    async function performSearch(userInput) {
 
     try {

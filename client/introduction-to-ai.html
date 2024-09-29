@@ -88,11 +88,33 @@
         .video-title {
             font-size: 14px;
         }
+       
+
+.take-exam-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #ffffff;
+    background-color: #1a73e8;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.take-exam-btn:hover {
+    background-color: #155ab2;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+
     </style>
 </head>
 
 <body>
     <!-- Left Side: Modules and Topics -->
+
     <div id="left-container">
         <h2>Modules</h2>
 
@@ -117,6 +139,9 @@
                 <li><a href="#machine-learning" id="machine-learning" onclick="handleLinkClick(event)">Machine Learning</a></li>
                 <li><a href="#deep-learning" id="deep-learning" onclick="handleLinkClick(event)">Deep Learning</a></li>
             </ul>
+        </div>
+        <div class="button-container">
+            <a href="finalexampage.html" class="take-exam-btn">Take Exam</a>
         </div>
     </div>
 
@@ -236,6 +261,16 @@ function displayThumbnails(videos) {
         container.appendChild(thumbnailDiv);
     });
 }
+
+    // When the "Take Exam" button is clicked, pass the course name via the query parameter.
+    document.querySelector('.take-exam-btn').addEventListener('click', function (event) {
+        event.preventDefault();
+        const courseName = encodeURIComponent('Introduction to AI'); // Course name to pass
+
+        // Redirect to finalexampage.html with the query string
+        window.location.href = `finalexampage.html?courseName=${courseName}`;
+    });
+
 
     </script>
 </body>
