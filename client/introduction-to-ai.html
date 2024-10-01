@@ -153,6 +153,7 @@
     <script>
          window.addEventListener("DOMContentLoaded", function () {
             const urlHash = window.location.hash;
+            console.log("url hash:",urlHash)
             if (urlHash) {
                 const topicId = urlHash.substring(1); // Remove the leading '#'
                 const topicElement = document.getElementById(topicId);
@@ -174,7 +175,10 @@
         });
         function handleLinkClick(event) {
             event.preventDefault();
-            const searchQuery = event.target.textContent.trim();
+            const topicName = event.target.textContent.trim();
+            const moduleName="Artifical-Intelligence"
+            const searchQuery = `${moduleName} ${topicName}`;
+            console.log("search query:",searchQuery)
             searchYouTubeVideos(searchQuery);
         }
 

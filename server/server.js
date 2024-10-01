@@ -5,9 +5,28 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import dotenv from 'dotenv';
 import {transcript} from './tools/temp.js';
-
+import mongoose from "mongoose";
+import { router as authRoutes } from "./routes/auth.js";
+import { authenticate } from "./middleware/auth.js";
 import { coursesData } from './tools/topics.js';
 dotenv.config();
+console.log(process.env.MONGO_URI)
+const mongoURI = 'mongodb+srv://Vimal:eduflex@cluster0.czyxx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'; // Ensure MONGO_URI is being loaded
+
+if (!mongoURI) {
+  console.error("MongoDB connection string is missing");
+  process.exit(1); // Exit the application if no MongoDB URI is provided
+}
+
+mongoose
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+
 
 
 
@@ -32,7 +51,7 @@ const port = 5000;
 
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Body parser to parse JSON requests
-
+app.use("/auth",authRoutes);
 
 
 // Static Files (your existing front-end files)
@@ -59,20 +78,24 @@ async function decideToolWithGemini(userInput, apiKey) {
     const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash', temperature: 0 });
     
     const context = `
-      You are a tool manager that decides which tool to use based on the user's input: ${userInput}.
-      Select one of the following tools:
-        Tool 1: Semantic search (requires a topic name as input).
-        Tool 2: Create a custom exam (requires a topic name, number of questions, and difficulty level - 'easy', 'medium', 'hard').
-      Return a valid JSON response with two fields: 'tool' and 'input'. (Very important: do not include any tick symbols or the word 'json' inside the text field in the response).
-      Example response:
-      {
-        "tool": 2,
-        "input": {
-          "topic": "Quantum Physics",
-          "num_questions": 10,
-          "difficulty": "medium"
-        }
-      }
+   You are a tool manager that selects a tool based on the user's input: ${userInput}.
+Choose one of the following tools:
+  Tool 1: Semantic search(use if users is searching for a topic or an course) (requires a topic name as input).
+  Tool 2: Create a custom exam (use it if user is asking to create an custom exam)(requires a topic name, number of questions, and difficulty level - 'easy', 'medium', 'hard').
+Return a valid JSON response. The response **must** only contain two fields: 'tool' and 'input'. 
+
+The format should strictly follow this structure:
+{
+  "tool": 2,
+  "input": {
+    "topic": "Quantum Physics",
+    "num_questions": 10,
+    "difficulty": "medium"
+  }
+}
+
+Do not include any additional text or comments. The response should only contain valid JSON as shown above. 
+
     `;
 
     console.log("Context:", context);
@@ -98,38 +121,13 @@ async function decideToolWithGemini(userInput, apiKey) {
   }
 }
 
-async function fetchtopicname(videoId) {
-  console.log("videoid:",videoId)
-  const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${YOUTUBE_API_KEY}&part=snippet`;
 
-  try {
-    const response = await fetch(apiUrl);
-    if (!response.ok) {
-      throw new Error(`YouTube API request failed: ${response.statusText}`);
-    }
-    
-    const data = await response.json();
-    
-    if (data.items && data.items.length > 0) {
-      const videoTitle = data.items[0].snippet.title;
-      console.log(videoTitle)
-      return videoTitle;
-    } else {
-      throw new Error('No video found with the given ID');
-    }
-
-  } catch (error) {
-    console.error('Error fetching video title:', error);
-    throw error;
-  }
-  
-}
 
 
 async function generateContent(prompt, context) {
   const genAI = new GoogleGenerativeAI(apiKey);
   try {
-    const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-pro-002' });
+    const model = await genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     const updatedPrompt = `${context}\n${prompt}`;
     const result = await model.generateContent(updatedPrompt);
 
@@ -162,35 +160,56 @@ async function fetchEnglishTranscript(videoId) {
     throw new Error('Transcript fetching failed');
   }
 }
-
+//for video exams
 async function generateMCQTest(videoId, numQuestions, difficultyLevel) {
 
   const genAI = new GoogleGenerativeAI(apiKey);
   currenttopicname=await transcript(videoId);
   console.log("current topic name in server",currenttopicname)
   const prompt = `
-    Create an MCQ test based on the following specifications:
-    - Topic: ${currenttopicname}
-    - Number of questions: ${numQuestions}
-    - Difficulty level: ${difficultyLevel} (easy, medium, hard)
-
-    For each question, provide the following format:
-    {
-      "question": {
-        "id": "q1",
-        "text": "Your question text here",
-        "options": [
-          { "id": "o1", "text": "Option 1" },
-          { "id": "o2", "text": "Option 2" },
-          { "id": "o3", "text": "Option 3" },
-          { "id": "o4", "text": "Option 4" }
-        ],
-        "answer": {
-          "optionId": "correct_option_id",
-          "text": "Correct answer text"
-        }
+  You are generating a multiple-choice test based on the following specifications:
+  - Topic: ${currenttopicname}
+  - Number of questions: ${numQuestions}
+  - Difficulty level: ${difficultyLevel} (easy, medium, hard)
+  Important:
+  1. Ensure the response is a valid JSON array containing multiple questions.
+  2. The response format must strictly follow this example structure:
+  [
+  {
+    "question": {
+      "id": "q1",
+      "text": "What is AI?",
+      "options": [
+        { "id": "o1", "text": "Artificial Intelligence" },
+        { "id": "o2", "text": "Automated Input" },
+        { "id": "o3", "text": "Algorithm Interaction" },
+        { "id": "o4", "text": "Automated Integration" }
+      ],
+      "answer": {
+        "optionId": "o1",
+        "text": "Artificial Intelligence"
       }
     }
+  },
+  {
+    "question": {
+      "id": "q2",
+      "text": "How does AI learn?",
+      "options": [
+        { "id": "o1", "text": "By inputting rules" },
+        { "id": "o2", "text": "Through machine learning" },
+        { "id": "o3", "text": "With manual updates" },
+        { "id": "o4", "text": "By random guessing" }
+      ],
+      "answer": {
+        "optionId": "o2",
+        "text": "Through machine learning"
+      }
+    }
+  }
+]
+  3. Do not include any additional text, comments, or explanations.
+  4. The response should contain exactly ${numQuestions} questions.
   `;
 
   try {
@@ -199,6 +218,7 @@ async function generateMCQTest(videoId, numQuestions, difficultyLevel) {
     const result = await model.generateContent(prompt);
     console.log("result",result)
     let responseText = result.response.text().trim();
+    console.log("result",responseText)
     responseText = responseText.replace(/```json|```/g, "").trim();
     
     const generatedResponse = JSON.parse(responseText);
@@ -209,34 +229,57 @@ async function generateMCQTest(videoId, numQuestions, difficultyLevel) {
     throw new Error('MCQ generation failed');
   }
 }
+//final exam mcq generration function
 async function generateMCQTestwithtopics(topics, numQuestions, difficultyLevel) {
   const genAI = new GoogleGenerativeAI(apiKey);
   
   console.log("Current topic name in server:", topics);
   const prompt = `
-    Create an MCQ test based on the following specifications:
-    - Topic: ${topics}
-    - Number of questions: ${numQuestions}
-    - Difficulty level: ${difficultyLevel} (easy, medium, hard)
-
-    (very important :For each question, provide the following format:
-    {
-      "question": {
-        "id": "q1",
-        "text": "Your question text here",
-        "options": [
-          { "id": "o1", "text": "Option 1" },
-          { "id": "o2", "text": "Option 2" },
-          { "id": "o3", "text": "Option 3" },
-          { "id": "o4", "text": "Option 4" }
-        ],
-        "answer": {
-          "optionId": "correct_option_id",
-          "text": "Correct answer text"
-        }
+  You are generating a multiple-choice test based on the following specifications:
+  - Topic: ${topics}
+  - Number of questions: ${numQuestions}
+  - Difficulty level: ${difficultyLevel} (easy, medium, hard)
+  Important:
+  1. Ensure the response is a valid JSON array containing multiple questions.
+  2. The response format must strictly follow this example structure:
+  [
+  {
+    "question": {
+      "id": "q1",
+      "text": "What is AI?",
+      "options": [
+        { "id": "o1", "text": "Artificial Intelligence" },
+        { "id": "o2", "text": "Automated Input" },
+        { "id": "o3", "text": "Algorithm Interaction" },
+        { "id": "o4", "text": "Automated Integration" }
+      ],
+      "answer": {
+        "optionId": "o1",
+        "text": "Artificial Intelligence"
       }
     }
+  },
+  {
+    "question": {
+      "id": "q2",
+      "text": "How does AI learn?",
+      "options": [
+        { "id": "o1", "text": "By inputting rules" },
+        { "id": "o2", "text": "Through machine learning" },
+        { "id": "o3", "text": "With manual updates" },
+        { "id": "o4", "text": "By random guessing" }
+      ],
+      "answer": {
+        "optionId": "o2",
+        "text": "Through machine learning"
+      }
+    }
+  }
+]
+  3. Do not include any additional text, comments, or explanations.
+  4. The response should contain exactly ${numQuestions} questions.
   `;
+  
 
   try {
     const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -275,43 +318,84 @@ async function transcripttocontext(videoId) {
     console.error("Error in transcripttocontext:", error);
   }
 }
+
+
+//for custom exams
 async function generatecustomMCQTest(toolInputs){
   const genAI = new GoogleGenerativeAI(apiKey);
+
+  console.log("tool inputs",toolInputs)
+  const parsedInputs = JSON.parse(toolInputs);
+  const topics = parsedInputs.topic;          // "Machine Learning"
+  const numQuestions = parsedInputs.num_questions; // 10
+  const difficultyLevel = parsedInputs.difficulty; // "medium"
+
+// Logging the extracted values
+
+
+console.log("Difficulty Level:", difficultyLevel);
  
   
-  const prompt = `
-    Create an MCQ test based on the following specifications:
-    ${toolInputs}
-
-    For each question, provide the following format:
-    {
-      "question": {
-        "id": "q1",
-        "text": "Your question text here",
-        "options": [
-          { "id": "o1", "text": "Option 1" },
-          { "id": "o2", "text": "Option 2" },
-          { "id": "o3", "text": "Option 3" },
-          { "id": "o4", "text": "Option 4" }
-        ],
-        "answer": {
-          "optionId": "correct_option_id",
-          "text": "Correct answer text"
-        }
+ const prompt = `
+  You are generating a multiple-choice test based on the following specifications:
+  - Topic: ${topics}
+  - Number of questions: ${numQuestions}
+  - Difficulty level: ${difficultyLevel} (easy, medium, hard)
+  Important:
+  1. Ensure the response is a valid JSON array containing multiple questions.
+  2. The response format must strictly follow this example structure:
+  [
+  {
+    "question": {
+      "id": "q1",
+      "text": "What is AI?",
+      "options": [
+        { "id": "o1", "text": "Artificial Intelligence" },
+        { "id": "o2", "text": "Automated Input" },
+        { "id": "o3", "text": "Algorithm Interaction" },
+        { "id": "o4", "text": "Automated Integration" }
+      ],
+      "answer": {
+        "optionId": "o1",
+        "text": "Artificial Intelligence"
       }
     }
+  },
+  {
+    "question": {
+      "id": "q2",
+      "text": "How does AI learn?",
+      "options": [
+        { "id": "o1", "text": "By inputting rules" },
+        { "id": "o2", "text": "Through machine learning" },
+        { "id": "o3", "text": "With manual updates" },
+        { "id": "o4", "text": "By random guessing" }
+      ],
+      "answer": {
+        "optionId": "o2",
+        "text": "Through machine learning"
+      }
+    }
+  }
+]
+  3. Do not include any additional text, comments, or explanations.
+  4. The response should contain exactly ${numQuestions} questions.
   `
   try {
     const model = await genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    console.log(prompt)
+    
+
     const result = await model.generateContent(prompt);
-    console.log("result",result)
+    
     let responseText = result.response.text().trim();
     responseText = responseText.replace(/```json|```/g, "").trim();
+    console.log("trimed response",responseText)
     
-    const generatedResponse = JSON.parse(responseText);
-    console.log("generatedresponse:",generatedResponse)
+      const generatedResponse = JSON.parse(responseText);
+   
     return generatedResponse;
+      
+   
   } catch (error) {
     console.error("Error generating MCQ test:", error);
     throw new Error('MCQ generation failed');
@@ -419,33 +503,42 @@ app.post('/generate-mcq-finalexam', async (req, res) => {
 });
 // Endpoint to start a conversation
 
-app.post('/start-conversation', async (req, res) => {
+let conversationStarted = false; // Track whether the conversation has started
 
+app.post('/start-conversation', async (req, res) => {
   const { userPrompt, videoId } = req.body;
 
   if (!userPrompt || !videoId) {
     return res.status(400).json({ error: 'userPrompt and videoId are required' });
   }
 
-  // Update the userPrompt to include the YouTube link
-  const data=await transcript(videoId)
-  const updatedPrompt = `${userPrompt} this is the YouTube video that I want to talk about: ${data}`;
+  // Fetch the transcript from the YouTube video
+  const data = await transcript(videoId);
+  let updatedPrompt;
 
-  
-  
+  // Include transcript only in the first conversation
+  if (!conversationStarted) {
+    updatedPrompt = `${userPrompt} this is the YouTube video that I want to talk about: ${data}`;
+    conversationStarted = true; // Set the flag to true after the first conversation
+  } else {
+    updatedPrompt = `${userPrompt}`;
+  }
+
   const context = conversationHistory.map(entry => `${entry.user}: ${entry.system}`).join('\n');
-  console.log("context:",context)
-  console.log("chathistory:",conversationHistory)
+  console.log("context:", context);
+  console.log("chat history:", conversationHistory);
 
   try {
     const response = await generateContent(updatedPrompt, context);
+    // Optionally, store the latest conversation in the history
+    conversationHistory.push({ user: userPrompt, system: response });
+
     res.json({ response });
   } catch (error) {
     console.error('Conversation Error:', error);
     res.status(500).json({ error: 'Failed to generate response', details: error.message });
   }
 });
-
 // Endpoint for semantic search
 app.post('/semantic-search', async (req, res) => {
   const { userinput } = req.body;

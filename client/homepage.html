@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduFlex Home</title>
+    <style>
+        header {
+    display: flex;
+    justify-content: space-between; /* This spaces out items in the header */
+    align-items: center; /* Aligns items vertically centered */
+    padding: 10px;
+}
+
+#logout-btn {
+    margin-left: auto; /* Pushes the button to the right */
+    background-color: #007bff; /* Change to your preferred button color */
+    color: white; /* Text color */
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+      .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8f9fa; /* Light background */
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-info span {
+    margin-right: 1rem;
+}
+
+
+
+#logout-button:hover {
+    background-color: #0056b3; /* Darker shade for hover */
+}
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            padding: 50px 0;
+            text-align: center;
+        }
+
+        .search-bar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .search-description {
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-icon {
+            margin-left: 8px;
+            cursor: pointer;
+            position: relative;
+            font-size: 20px;
+        }
+
+        .info-icon:hover .info-tooltip {
+            display: block;
+        }
+
+        .info-tooltip {
+            display: none;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            width: 250px;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .search-bar {
+            width: 80%; /* Wider bar */
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .courses-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .course-card {
+            width: 300px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-image {
+  width: 100%; /* Image takes full width of its container */
+  height: auto; /* Height adjusts based on image proportions */
+  object-fit: contain;
+}       .course-content {
+            padding: 15px;
+        }
+
+        .course-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .course-description {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .course-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .course-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <h1>Welcome to EduFlex</h1>
+            <div class="user-info">
+               
+                
+            </div>
+        </div>
+    </nav>
+<header>
+    <button id="logout-button">Logout</button>
+</header>
+
+
+
+<div class="search-bar-container">
+    <div class="search-description">
+        Use the AI agent to search, take custom exams, or update your profile
+        <span class="info-icon">ℹ
+            <div class="info-tooltip">
+                valid  prompts as of now:<br>
+                1. "Search for [course]"(Read)<br>
+                2. "create and  exam on [topic,number of questions ,difficulty level]"(Create)<br>
+                3. "Update my profile with [info]"(Update)<br>
+               
+            </div>
+        </span>
+    </div>
+    <input type="text" class="search-bar" placeholder="Task Pilot...">
+</div>
+
+<div class="courses-container">
+    <!-- Example course cards -->
+    <div class="course-card">
+        <img src="https://media.geeksforgeeks.org/wp-content/uploads/20240319155102/what-is-ai-artificial-intelligence.webp" alt="Course Image" class="course-image">
+        <div class="course-content">
+            <h3 class="course-title">Introduction to AI</h3>
+            <p class="course-description">A brief description of the course goes here. Learn more about this topic.</p>
+            <a href="#" class="course-button" onclick="viewCourse('Introduction to AI', 'A brief description of the course goes here. Learn more about this topic.', 'https://media.geeksforgeeks.org/wp-content/uploads/20240319155102/what-is-ai-artificial-intelligence.webp')">View Course</a>
+        </div>
+    </div>
+
+    <div class="course-card">
+        <img src="https://reactnative.dev/img/logo-og.png" alt="Course Image" class="course-image">
+        <div class="course-content">
+            <h3 class="course-title">React Basics</h3>
+            <p class="course-description">A brief Introduction to React.</p>
+            <a href="react-basics.html" class="course-button">View Course</a>
+        </div>
+    </div>
+
+    <div class="course-card">
+        <img src="https://www.simpleimageresizer.com/_uploads/photos/ca8e76e0/unemployed_poster_1_optimized.png" alt="Course Image" class="course-image">
+        <div class="course-content">
+            <h3 class="course-title">How to Cope with Unemployment After College</h3>
+            <p class="course-description">The Unexpected Twist After College</p>
+            <a href="myfuture.html" class="course-button">View Course</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const userInfoDiv = document.getElementById("user-info");
+    const username = localStorage.getItem("username");
+
+    if (username) {
+       /* userInfoDiv.innerHTML = `
+          <p>Hello, ${username}</p>
+          <button id="logout-button">Logout</button>
+        `;
+        document
+          .getElementById("logout-button")
+          .addEventListener("click", () => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+            window.location.reload();
+          });*/
+    } else {
+        userInfoDiv.innerHTML = `
+        <a href="login.html">Login</a> | <a href="signup.html">Signup</a>
+      `;
+    }
+    const searchBar = document.querySelector('.search-bar');
+
+    searchBar.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            const userInput = searchBar.value;
+            agent(userInput);
+        }
+    });
+
+    async function agent(userInput) {
+        console.log("userinput in index", userInput);
+        const baseUrl = 'http://localhost:5000'; // Default if not set
+
+        try {
+            const response = await fetch(`${baseUrl}/agent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userInput: userInput }), // Ensure it's 'userInput' in the body
+            });
+            console.log("response from server", response)
+
+            // Check if the response is successful
+            if (!response.ok) {
+                throw new Error(`Error fetching results: ${response.statusText}`);
+            }
+
+            // Parse the JSON response
+            const parsedResult = await response.json(); // Correctly parsing the JSON
+            console.log("Parsed result:", parsedResult);
+
+            const toolNumber = parsedResult.tool;
+            console.log("Tool number in index:", toolNumber);
+            const toolInput = JSON.stringify(parsedResult.input, null, 2);
+            console.log("Tool input:", toolInput);
+
+            // Conditional logic based on the tool number
+            if (toolNumber === 1) {
+                console.log("Calling semantic search");
+                performSearch(toolInput); // Assuming you have this function defined
+            } else if (toolNumber === 2) {
+                console.log("Calling custom exam");
+                createcustomexam(toolInput); // Assuming you have this function defined
+            }
+        } catch (error) {
+            console.error("Error in agent function:", error)
+        }
+      }
+      async function createcustomexam(toolInput){
+  window.location.href = `customexampage.html?toolinputs=${toolInput}`;
+}
+   async function performSearch(userInput) {
+
+    try {
+        const baseUrl = 'http://localhost:5000'; // Default if not set
+
+      const response = await fetch(`${baseUrl}/semantic-search`, {
+        // ... rest of your fetch options
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userinput: userInput }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error fetching results: ${response.statusText}`);
+      }
+  
+      const data = await response.json(); // Assign the JSON response to data
+  
+      if (data) {
+        // Redirect the user if a valid URL is returned
+
+        console.log(data)
+        const courseUrlParts = data.url.split('/'); // Split URL into parts
+        const courseName = courseUrlParts[1];
+        const topicname=courseUrlParts[3] // The course name is the second part of the URL
+
+            // Redirect to the course page using the course name
+        window.location.href = `http://192.168.56.1:8080/${courseName}#${topicname}`;
+
+      } else {
+        // Handle no URL found (optional, display a message or default behavior)
+        console.warn('No matching URL found for:', userInput);
+      }
+    } catch (error) {
+      console.log('Error during search:', error);
+    }
+  }
+        function viewCourse(title, description, imageUrl) {
+            // Save course details to session storage
+            sessionStorage.setItem('courseTitle', title);
+            sessionStorage.setItem('courseDescription', description);
+            sessionStorage.setItem('courseImage', imageUrl);
+    
+            // Redirect to the detailed course page
+            window.location.href = 'introduction-to-ai.html';
+        }
+    </script>
+    
+
+</body>
+</html>

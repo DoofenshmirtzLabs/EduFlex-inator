@@ -56,24 +56,83 @@
         #submit-exam-button:hover {
             background: #0056b3;
         }
-    </style>
+        #meme {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(0deg);
+            width: 0;
+            transition: all 2s ease-out;
+        }
+        #loading-bar-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: rgba(255, 255, 255, 0.8);
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+    }
+    #loading-container img {
+        width: 200px;
+    }
+    #loading-bar-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: rgba(255, 255, 255, 0.8);
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+    }
+    #loading-container img {
+        width: 200px;
+    }
+   
+    
+</style>
 </head>
-<body>
 
+    
     <div id="exam-container">
         <h2>Exam Questions</h2>
         <div id="exam-question" class="question"></div>
         <ul id="exam-options" class="options"></ul>
         <button id="submit-exam-button" onclick="submitExam()">Submit</button>
         <div id="score" style="text-align: center; margin-top: 20px;"></div>
-    </div>
+        <div id="meme-container"></div>
+            <img id="meme" src="" alt="Meme GIF">
+            <div id="loading-bar-container">
+                <div id="loading-container">
+                    <img id="loading-bar" src="https://media.tenor.com/d9-oc__al-QAAAAM/subway-surfers.gif" alt="Loading GIF" />
+                </div>
+        </div>
+        
+        
 
     <script>
         let videoId = null;
         const questions = []; // Will hold the questions fetched from the server
         let currentQuestionIndex = 0;
         let score = 0; // Variable to hold the score
+        const memes = {
+            low: 'https://c.tenor.com/aSkdq3IU0g0AAAAC/tenor.gif',
+            medium: 'https://y.yarn.co/a5e53363-be67-41b1-b9ce-eefd127c043d_text.gif',
+            high: 'https://c.tenor.com/dlzYGThHPRwAAAAC/tenor.gif',
+            perfect: 'https://ih1.redbubble.net/image.5089034366.2058/st,small,507x507-pad,600x600,f8f8f8.jpg'
+        };
 
+        function hideLoadingBar() {
+            document.getElementById('loading-bar-container').style.display = 'none';
+            document.getElementById('exam-container').style.display = 'block';
+        }
         // Function to get videoId from URL
         function getVideoIdFromUrl() {
             const params = new URLSearchParams(window.location.search);
@@ -91,7 +150,18 @@
                     body: JSON.stringify({ videoId: videoId, numQuestions: 5, difficultyLevel: "medium" })
                 });
                 const examData = await response.json();
-                questions.push(...examData);
+        console.log("exam data", examData);
+
+        // Since examData.questions is an array
+        if (Array.isArray(examData)) {
+            examData.forEach(questionObj => {
+                questions.push(questionObj);
+            });
+        } else {
+            console.error('Unexpected exam format received:', examData);
+            hideLoadingBar()
+        }
+                hideLoadingBar(); 
                 displayQuestion();
             } catch (error) {
                 console.error('Error fetching exam:', error);
@@ -155,12 +225,49 @@
         // Function to display the final score
         function displayScore() {
             const scoreElement = document.getElementById('score');
+            const percentagescore = (score / questions.length) * 100;
             scoreElement.textContent = `You scored ${score} out of ${questions.length}`;
+
+            
+
+            showMemeWithAnimation(percentagescore);
             document.getElementById('exam-question').style.display = 'none';
             document.getElementById('exam-options').style.display = 'none';
             document.getElementById('submit-exam-button').style.display = 'none';
+            if (percentagescore >=20) {
+                window.location.href = `certificate.html?courseName=${courseName}`;
+            }
         }
 
+        // Function to show meme with animation
+        function showMemeWithAnimation(percentageScore) {
+            const memeElement = document.getElementById('meme');
+            let memeSrc = '';
+
+            // Set meme source based on score range
+            if (percentageScore < 25) {
+                memeSrc = memes.low;
+            } else if (percentageScore < 50) {
+                memeSrc = memes.medium;
+            } else if (percentageScore < 75) {
+                memeSrc = memes.high;
+            } else {
+                memeSrc = memes.perfect;
+            }
+
+            // Update meme source and show it
+            memeElement.src = memeSrc;
+            memeElement.style.display = 'block';
+
+            // Add the animation
+            memeElement.style.transform = 'translate(-50%, -50%) rotate(0deg)';
+            memeElement.style.width = '0';
+
+            setTimeout(() => {
+                memeElement.style.width = '300px';
+                memeElement.style.transform = 'translate(-50%, -50%) rotate(360deg)';
+            }, 1000);
+        }
         // Combine both getting the videoId and fetching the exam in one window.onload
         window.onload = function() {
             // Get the video ID from the URL

@@ -1,242 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduFlex Home</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background-color: #f8f9fa;
-        }
+      body {
+        background: linear-gradient(to right, #1e3c72, #2a5298); /* Initial bluish gradient background */
+        color: white; /* Text color */
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Full viewport height */
+        margin: 0; /* Remove default margin */
+        background-size: cover; /* Cover the entire background */
+        background-position: center; /* Center the background image */
+      }
 
-        header {
-            padding: 50px 0;
-            text-align: center;
-        }
+      #login-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-        .search-bar-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 40px;
-        }
+      h1 {
+        margin-bottom: 20px; /* Space below the heading */
+        font-size: 32px; /* Company name size */
+        color: #d1e8ff; /* Company name color */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Shadow for depth */
+      }
 
-        .search-bar {
-            width: 50%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+      h2 {
+        margin-bottom: 20px; /* Space below the heading */
+        font-size: 24px; /* Login heading size */
+      }
 
-        .courses-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-        }
+      #login-form {
+        background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+        backdrop-filter: blur(10px); /* Glass effect */
+        padding: 30px; /* Inner padding */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+        border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for glassy effect */
+      }
 
-        .course-card {
-            width: 300px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
+      input {
+        width: 100%; /* Full width for input fields */
+        padding: 10px; /* Inner padding for inputs */
+        margin-bottom: 15px; /* Space between inputs */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Rounded corners */
+        outline: none; /* Remove outline */
+      }
 
-        .course-card:hover {
-            transform: translateY(-5px);
-        }
+      input:focus {
+        background-color: rgba(255, 255, 255, 0.3); /* Light background on focus */
+      }
 
-        .course-image {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
+      button {
+        width: 100%; /* Full width for the button */
+        padding: 10px; /* Inner padding for button */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Rounded corners */
+        background-color: #2a5298; /* Button color */
+        color: white; /* Button text color */
+        font-size: 16px; /* Font size */
+        cursor: pointer; /* Pointer cursor on hover */
+        transition: background-color 0.3s; /* Smooth transition */
+      }
 
-        .course-content {
-            padding: 15px;
-        }
+      button:hover {
+        background-color: #1e3c72; /* Darker shade on hover */
+      }
 
-        .course-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+      p {
+        margin-top: 20px; /* Space above paragraph */
+      }
 
-        .course-description {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 15px;
-        }
+      a {
+        color: #d1e8ff; /* Link color */
+        text-decoration: none; /* Remove underline */
+      }
 
-        .course-button {
-            display: inline-block;
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .course-button:hover {
-            background-color: #0056b3;
-        }
+      a:hover {
+        text-decoration: underline; /* Underline on hover */
+      }
     </style>
-</head>
-<body>
-
-    <header>
-        <h1>Welcome to EduFlex</h1>
-    </header>
-
-    <div class="search-bar-container">
-        <input type="text" class="search-bar" placeholder="Search for courses...">
+  </head>
+  <body>
+    <div id="login-container">
+      <h1>EduFlex</h1>
+      <h2>Login</h2>
+      <form id="login-form">
+        <input type="email" id="email" placeholder="Email" required /><br />
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          required
+        /><br />
+        <button type="submit">Login</button>
+      </form>
+      <p>Don't have an account? <a href="signup.html">Signup here</a></p>
     </div>
-
-    <div class="courses-container">
-        <!-- Example course cards, you can add more or generate them dynamically -->
-        <div class="course-card">
-            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20240319155102/what-is-ai-artificial-intelligence.webp" alt="Course Image" class="course-image">
-            <div class="course-content">
-                <h3 class="course-title">Introduction to AI</h3>
-                <p class="course-description">A brief description of the course goes here. Learn more about this topic.</p>
-                <a href="#" class="course-button" onclick="viewCourse('Introduction to AI', 'A brief description of the course goes here. Learn more about this topic.', 'https://media.geeksforgeeks.org/wp-content/uploads/20240319155102/what-is-ai-artificial-intelligence.webp')">View Course</a>
-            </div>
-        </div>
-
-        <div class="course-card">
-            <img src="https://via.placeholder.com/300x150" alt="Course Image" class="course-image">
-            <div class="course-content">
-                <h3 class="course-title">Course Title 2</h3>
-                <p class="course-description">A brief description of the course goes here. Learn more about this topic.</p>
-                <a href="#" class="course-button">View Course</a>
-            </div>
-        </div>
-
-        <div class="course-card">
-            <img src="https://via.placeholder.com/300x150" alt="Course Image" class="course-image">
-            <div class="course-content">
-                <h3 class="course-title">Course Title 3</h3>
-                <p class="course-description">A brief description of the course goes here. Learn more about this topic.</p>
-                <a href="#" class="course-button">View Course</a>
-            </div>
-        </div>
-
-        <!-- Add more course cards as needed -->
-    </div>
+    
     <script>
-        const searchBar = document.querySelector('.search-bar');
+      let failedAttempts = 0; // Track the number of failed login attempts
 
-searchBar.addEventListener('keypress', (event) => {
-  if (event.key === 'Enter') {
-    const userInput = searchBar.value;
-    agent(userInput);
-  }
-});
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value.trim();
 
-async function agent(userInput) {
-  console.log("userinput in index", userInput);
-  const baseUrl = 'http://localhost:5000'; // Default if not set
+          try {
+            const response = await fetch("http://localhost:5000/auth/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, password }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+              // Save the token to localStorage
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("username", data.username);
+              alert("Login successful!");
+              window.location.href = "homepage.html"; // Redirect to homepage
+            } else {
+              failedAttempts++;
+              alert(data.message);
+              changeBackgroundImage(failedAttempts);
+            }
+          } catch (error) {
+            console.error("Login error:", error);
+            alert("An error occurred during login.");
+          }
+        });
 
-  try {
-    const response = await fetch(`${baseUrl}/agent`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userInput: userInput }), // Ensure it's 'userInput' in the body
-    });
-    console.log("response from server",response)
-
-    // Check if the response is successful
-    if (!response.ok) {
-      throw new Error(`Error fetching results: ${response.statusText}`);
-    }
-
-    // Parse the JSON response
-    const parsedResult = await response.json(); // Correctly parsing the JSON
-    console.log("Parsed result:", parsedResult);
-
-    const toolNumber = parsedResult.tool;
-    console.log("Tool number in index:", toolNumber);
-    const toolInput = JSON.stringify(parsedResult.input, null, 2);
-    console.log("Tool input:", toolInput);
-
-    // Conditional logic based on the tool number
-    if (toolNumber === 1) {
-      console.log("Calling semantic search");
-      performSearch(toolInput); // Assuming you have this function defined
-    } else if (toolNumber === 2) {
-      console.log("Calling custom exam");
-      createcustomexam(toolInput); // Assuming you have this function defined
-    }
-  } catch (error) {
-    console.error("Error in agent function:", error);
-  }
-}
-async function createcustomexam(toolInput){
-  window.location.href = `customexampage.html?toolinputs=${toolInput}`;
-}
-   async function performSearch(userInput) {
-
-    try {
-        const baseUrl = 'http://localhost:5000'; // Default if not set
-
-      const response = await fetch(`${baseUrl}/semantic-search`, {
-        // ... rest of your fetch options
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userinput: userInput }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Error fetching results: ${response.statusText}`);
-      }
-  
-      const data = await response.json(); // Assign the JSON response to data
-  
-      if (data) {
-        // Redirect the user if a valid URL is returned
-
-        console.log(data)
-        const courseUrlParts = data.url.split('/'); // Split URL into parts
-        const courseName = courseUrlParts[1];
-        const topicname=courseUrlParts[3] // The course name is the second part of the URL
-
-            // Redirect to the course page using the course name
-        window.location.href = `http://192.168.56.1:8080/${courseName}#${topicname}`;
-
-      } else {
-        // Handle no URL found (optional, display a message or default behavior)
-        console.warn('No matching URL found for:', userInput);
-      }
-    } catch (error) {
-      console.log('Error during search:', error);
-    }
-  }
-        function viewCourse(title, description, imageUrl) {
-            // Save course details to session storage
-            sessionStorage.setItem('courseTitle', title);
-            sessionStorage.setItem('courseDescription', description);
-            sessionStorage.setItem('courseImage', imageUrl);
-    
-            // Redirect to the detailed course page
-            window.location.href = 'introduction-to-ai.html';
+      function changeBackgroundImage(attempts) {
+        if (attempts === 1) {
+          document.body.style.backgroundImage = "url('https://upload-os-bbs.hoyolab.com/upload/2024/01/09/270665082/185ea2e82dbe98ad268f2815dd8c4072_2263428939097189063.jpg?x-oss-process=image%2Fresize%2Cs_1000%2Fauto-orient%2C0%2Finterlace%2C1%2Fformat%2Cwebp%2Fquality%2Cq_70')"; // First failed attempt image
+        } else if (attempts === 2) {
+          document.body.style.backgroundImage = "url('https://media.tenor.com/4ia58csaI_sAAAAM/cat-war.gif')"; // Second failed attempt image
+        } else if (attempts >= 3) {
+          document.body.style.backgroundImage = "url('https://media.tenor.com/ZF9T7-Ily9EAAAAM/fighting-cat-cat-vs-human.gif')"; // Constant background image
         }
+      }
     </script>
-    
-
-</body>
+  </body>
 </html>

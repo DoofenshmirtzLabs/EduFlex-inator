@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        /* Button Styles */
+        .signout-btn {
+            margin: 20px;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .radio-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .radio-container input {
+            margin-right: 10px;
+        }
+
+        .gif-display {
+            display: none;
+            width: 100px;
+            height: auto;
+            margin-left: 10px;
+        }
+
+        .feedback-text {
+            width: 100%;
+            height: 80px;
+            margin-top: 10px;
+        }
+
+        /* Buttons */
+        .submit-btn, .cancel-btn {
+            margin: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        /* Add this to show the alt text if GIF fails */
+        img {
+            display: block;
+            width: 100px;
+            height: auto;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Sign Out Button -->
+<button class="signout-btn" id="signoutBtn">Sign Out</button>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            Please provide your feedback
+        </div>
+
+        <!-- Radio Button with GIFs -->
+        <div class="radio-container">
+            <input type="radio" name="feedback" value="option1" id="radio1">
+            <img src="https://www.icegif.com/wp-content/uploads/2023/09/icegif-908.gif" alt="Great experience GIF" id="gif1" class="gif-display">
+        </div>
+
+        <div class="radio-container">
+            <input type="radio" name="feedback" value="option2" id="radio2">
+            <img src="https://c.tenor.com/A-ozELwp694AAAAC/tenor.gif" alt="Okay experience GIF" id="gif2" class="gif-display">
+        </div>
+
+        <div class="radio-container">
+            <input type="radio" name="feedback" value="option3" id="radio3">
+            <img src="https://media.tenor.com/jD_ybv8bxAMAAAAM/the-rock-meme.gif" alt="Bad experience GIF" id="gif3" class="gif-display">
+        </div>
+
+        <!-- Optional Text Field -->
+        <textarea class="feedback-text" placeholder="Tell us more (optional)" id="moreFeedback"></textarea>
+
+        <!-- Submit and Cancel Buttons -->
+        <button class="submit-btn" id="submitFeedback">Submit</button>
+        <button class="cancel-btn" id="cancelFeedback">Cancel</button>
+    </div>
+</div>
+
+<script>
+    // Get the modal and buttons
+    const modal = document.getElementById('feedbackModal');
+    const signoutBtn = document.getElementById('signoutBtn');
+    const cancelBtn = document.getElementById('cancelFeedback');
+    const submitBtn = document.getElementById('submitFeedback');
+
+    // Get radio inputs and gifs
+    const radio1 = document.getElementById('radio1');
+    const radio2 = document.getElementById('radio2');
+    const radio3 = document.getElementById('radio3');
+
+    const gif1 = document.getElementById('gif1');
+    const gif2 = document.getElementById('gif2');
+    const gif3 = document.getElementById('gif3');
+
+    // Show modal on sign out click
+    signoutBtn.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    // Hide modal on cancel button click
+    cancelBtn.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Handle radio button changes and show relevant GIF
+    radio1.onclick = function() {
+        gif1.style.display = 'block';
+        gif2.style.display = 'none';
+        gif3.style.display = 'none';
+    }
+    radio2.onclick = function() {
+        gif1.style.display = 'none';
+        gif2.style.display = 'block';
+        gif3.style.display = 'none';
+    }
+    radio3.onclick = function() {
+        gif1.style.display = 'none';
+        gif2.style.display = 'none';
+        gif3.style.display = 'block';
+    }
+
+    // Handle submit feedback button click
+    submitBtn.onclick = function() {
+        const selectedFeedback = document.querySelector('input[name="feedback"]:checked');
+        const additionalFeedback = document.getElementById('moreFeedback').value;
+
+        if (selectedFeedback) {
+            alert(`Feedback Submitted! Additional feedback: ${additionalFeedback}`);
+            modal.style.display = 'none';
+        } else {
+            alert('Please select a feedback option.');
+        }
+    }
+</script>
+
+</body>
+</html>

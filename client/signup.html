@@ -1,0 +1,56 @@
+<!-- client/signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Signup</title>
+    <style>
+      /* Add your styles here */
+    </style>
+  </head>
+  <body>
+    <h2>Signup</h2>
+    <form id="signup-form">
+      <input type="text" id="username" placeholder="Username" required /><br />
+      <input type="email" id="email" placeholder="Email" required /><br />
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        required
+      /><br />
+      <button type="submit">Signup</button>
+    </form>
+    <p>Already have an account? <a href="login.html">Login here</a></p>
+    <script>
+      document
+        .getElementById("signup-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("username").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value.trim();
+
+          try {
+            const response = await fetch("http://localhost:5000/auth/signup", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ username, email, password }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+              alert(data.message);
+              window.location.href = "login.html";
+            } else {
+              alert(data.message);
+            }
+          } catch (error) {
+            console.error("Signup error:", error);
+            alert("An error occurred during signup.");
+          }
+        });
+    </script>
+  </body>
+</html>

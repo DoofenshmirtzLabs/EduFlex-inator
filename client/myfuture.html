@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+
+        /* Left container for modules */
+        #left-container {
+            width: 25%;
+            padding-right: 20px;
+            border-right: 2px solid #ddd;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        #left-container h2 {
+            margin-bottom: 10px;
+        }
+
+        /* Style for each module list */
+        .module {
+            margin-bottom: 20px;
+        }
+
+        .module ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .module li {
+            margin-bottom: 10px;
+        }
+
+        .module a {
+            color: #3b82f6;
+            text-decoration: none;
+            padding: 5px 0;
+            display: block;
+        }
+
+        .module a:hover {
+            background-color: #e0e7ff;
+            padding-left: 5px;
+        }
+
+        /* Right container for thumbnails */
+        #right-container {
+            width: 75%;
+            padding-left: 20px;
+        }
+
+        #thumbnails-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .thumbnail {
+            cursor: pointer;
+            border: 1px solid #ddd;
+            padding: 5px;
+            background-color: #fff;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .thumbnail:hover {
+            background-color: #eee;
+        }
+
+        .thumbnail img {
+            width: 120px;
+            height: auto;
+        }
+
+        .video-title {
+            font-size: 14px;
+        }
+       
+
+.take-exam-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #ffffff;
+    background-color: #1a73e8;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.take-exam-btn:hover {
+    background-color: #155ab2;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+
+    </style>
+</head>
+
+<body>
+    <!-- Left Side: Modules and Topics -->
+
+    <div id="left-container">
+        <h2>Modules</h2>
+
+        
+        <title>How to Cope with Unemployment After College </title>
+        <link rel="stylesheet" href="style.css"> <script src="script.js"></script> </head>
+    <body>
+        <div class="module">
+            <h3>The Joy of Joblessness</h3>
+            <ul>
+                <li><a href="#sleeping-in-bliss" id="sleeping-in-bliss" onclick="handleLinkClick(event)">The Thrill of Sleeping In</a></li>
+                <li><a href="#netflix-and-chill-masterclass" id="netflix-and-chill-masterclass" onclick="handleLinkClick(event)">The Art of Netflix and Chill</a></li>
+                <li><a href="#zen-of-unemployment" id="zen-of-unemployment" onclick="handleLinkClick(event)">The Zen of Unemployment</a></li>
+            </ul>
+        </div>
+    
+        <div class="module">
+            <h3>The Financial Freedom of Poverty</h3>
+            <ul>
+                <li><a href="#ramen-noodle-gourmet" id="ramen-noodle-gourmet" onclick="handleLinkClick(event)">Ramen Noodles: Your New Gourmet Cuisine</a></li>
+                <li><a href="#couponing-master" id="couponing-master" onclick="handleLinkClick(event)">The Art of Couponing</a></li>
+                <li><a href="#debt-thrill-ride" id="debt-thrill-ride" onclick="handleLinkClick(event)">The Thrill of Debt</a></li>
+            </ul>
+        </div>
+    
+        <div class="module">
+            <h3>The Social Life of a Jobless Graduate</h3>
+            <ul>
+                <li><a href="#jobless-parties" id="jobless-parties" onclick="handleLinkClick(event)">The Joy of Jobless Parties</a></li>
+                <li><a href="#networking-avoidance" id="networking-avoidance" onclick="handleLinkClick(event)">The Art of Networking (Avoidance)</a></li>
+                <li><a href="rejection-excitement" id="rejection-excitement" onclick="handleLinkClick(event)">The Thrill of Rejection</a></li>
+            </ul>
+        </div>
+        <div class="button-container">
+            <a href="finalexampage.html" class="take-exam-btn">Take Exam</a>
+        </div>
+    </div>
+
+    <!-- Right Side: Video Thumbnails -->
+    <div id="right-container">
+        <div id="thumbnails-container"></div>
+    </div>
+
+    <script>
+         window.addEventListener("DOMContentLoaded", function () {
+            const urlHash = window.location.hash;
+            console.log("url hash:",urlHash)
+            if (urlHash) {
+                const topicId = urlHash.substring(1); // Remove the leading '#'
+                const topicElement = document.getElementById(topicId);
+                console.log("topicelement",topicElement);
+                if (topicElement) {
+                    topicElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                    searchYouTubeVideos(topicElement.textContent.trim()); // Fetch videos for the topic in URL
+                }
+            } else {
+                // Load videos for the first topic in the first module by default
+                const firstTopicElement = document.querySelector('#left-container .module ul li a');
+                
+                console.log("first topic element",firstTopicElement);
+                if (firstTopicElement) {
+                    const firstTopicId = firstTopicElement.getAttribute('href').substring(1); 
+                    searchYouTubeVideos(firstTopicId);
+                }
+            }
+        });
+        function handleLinkClick(event) {
+            event.preventDefault();
+            const topicName = event.target.textContent.trim();
+            const moduleName="joblessness"
+            const searchQuery = `${moduleName} ${topicName}`;
+            console.log("search query:",searchQuery)
+            searchYouTubeVideos(searchQuery);
+        }
+
+        async function searchYouTubeVideos(searchQuery) {
+    const apiKey = 'AIzaSyAalKwhBlFVNN7xCIT4tCGFVNwETZhFaPM'; // Replace with your YouTube API key
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&maxResults=20&key=${apiKey}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        // Filter videos to check validity before displaying
+        const validVideos = await checkVideoValidity(data.items);
+        displayThumbnails(validVideos);
+    } catch (error) {
+        console.error('Error fetching YouTube data:', error);
+    }
+}
+
+// Function to check the validity of each video
+async function checkVideoValidity(videos) {
+    const validVideos = [];
+
+    for (const item of videos) {
+        const videoId = item.id.videoId;
+
+        // Check if the video is accessible
+        const isValid = await isVideoAccessible(videoId);
+        if (isValid) {
+            validVideos.push(item);
+        }
+    }
+
+    return validVideos;
+}
+
+// Function to check if a video is accessible
+async function isVideoAccessible(videoId) {
+    const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=AIzaSyAalKwhBlFVNN7xCIT4tCGFVNwETZhFaPM&part=status`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        // Check if the video status is 'ok'
+        return data.items.length > 0 && data.items[0].status.privacyStatus !== 'private';
+    } catch (error) {
+        console.error('Error checking video validity:', error);
+        return false; // If there's an error, consider it invalid
+    }
+}
+
+function displayThumbnails(videos) {
+    const container = document.getElementById('thumbnails-container');
+    container.innerHTML = '';
+
+    if (videos.length === 0) {
+        const noVideosMessage = document.createElement('div');
+        noVideosMessage.textContent = 'No valid videos found.';
+        container.appendChild(noVideosMessage);
+        return;
+    }
+
+    videos.forEach((item) => {
+        const videoId = item.id.videoId;
+        const title = item.snippet.title;
+        const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+        const thumbnailDiv = document.createElement('div');
+        thumbnailDiv.className = 'thumbnail';
+        thumbnailDiv.onclick = () => {
+            window.location.href = `video_page.html?videoId=${videoId}`;
+        };
+
+        const img = document.createElement('img');
+        img.src = thumbnailUrl;
+        img.alt = title;
+
+        const videoTitle = document.createElement('div');
+        videoTitle.className = 'video-title';
+        videoTitle.textContent = title;
+
+        thumbnailDiv.appendChild(img);
+        thumbnailDiv.appendChild(videoTitle);
+        container.appendChild(thumbnailDiv);
+    });
+}
+
+    // When the "Take Exam" button is clicked, pass the course name via the query parameter.
+    document.querySelector('.take-exam-btn').addEventListener('click', function (event) {
+        event.preventDefault();
+        const courseName = encodeURIComponent('Introduction to AI'); // Course name to pass
+
+        // Redirect to finalexampage.html with the query string
+        window.location.href = `finalexampage.html?courseName=${courseName}`;
+    });
+
+
+    </script>
+</body>
+
+</html>

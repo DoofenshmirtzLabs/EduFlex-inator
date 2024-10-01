@@ -75,12 +75,11 @@
             </div>
 
             <div class="person" id="personName">
-                Joe Nathan
+                <!-- Name will be inserted here -->
             </div>
 
             <div class="reason" id="reasonText">
-                For deftly defying the laws of gravity<br/>
-                and flying high
+                <!-- Reason will be inserted here -->
             </div>
         </div>
 
@@ -91,18 +90,31 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
         <script>
+            // Helper function to get query parameters
+            
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+
+            // Function to update certificate content dynamically
             function updateCertificate(userName, courseName, reason) {
                 document.getElementById('personName').innerText = userName;
                 document.getElementById('certificateTitle').innerText = `Certificate of Completion for ${courseName}`;
-                document.getElementById('reasonText').innerHTML = reason;
+                document.getElementById('reasonText').innerText = reason;
             }
 
-            // Example: Dynamically update certificate
-            const userName = "John Doe";  // Replace with actual user input
-            const courseName = "Machine Learning Basics";  // Replace with actual course name
-            const reason = "For successfully completing the Machine Learning Basics course and mastering foundational concepts.";
-
-            updateCertificate(userName, courseName, reason);
+            // When the document loads, update the certificate content
+            window.addEventListener('DOMContentLoaded', function () {
+                const courseName = decodeURIComponent(getQueryParam('courseName'));
+                const userName = "John Doe";  // Change this dynamically if needed
+                if (courseName) {
+                    const reason = `for successfully completing the ${courseName} course.`;
+                    updateCertificate(userName, courseName, reason);
+                } else {
+                    updateCertificate(userName, "Unknown Course", "for participation in the course.");
+                }
+            });
 
             // Function to download the certificate as PDF
             function downloadCertificate() {
