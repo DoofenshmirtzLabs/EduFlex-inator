@@ -128,7 +128,7 @@
             console.log("topics:", topics);
             console.log("num", num);
             try {
-                const response = await fetch('http://localhost:5000/generate-mcq-finalexam', {
+                const response = await fetch('https://eduflex-inator.onrender.com/generate-mcq-finalexam', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
