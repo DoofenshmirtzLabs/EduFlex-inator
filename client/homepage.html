@@ -234,6 +234,7 @@
 <script>
     const userInfoDiv = document.getElementById("user-info");
     const username = localStorage.getItem("username");
+    const baseUrl = 'https://eduflex-inator.onrender.com';
 
     if (username) {
        /* userInfoDiv.innerHTML = `
@@ -263,7 +264,7 @@
 
     async function agent(userInput) {
         console.log("userinput in index", userInput);
-        const baseUrl = 'http://localhost:5000'; // Default if not set
+        const baseUrl = 'https://eduflex-inator.onrender.com'; // Default if not set
 
         try {
             const response = await fetch(`${baseUrl}/agent`, {
@@ -309,7 +310,7 @@
    async function performSearch(userInput) {
 
     try {
-        const baseUrl = 'http://localhost:5000'; // Default if not set
+        // Default if not set
 
       const response = await fetch(`${baseUrl}/semantic-search`, {
         // ... rest of your fetch options
@@ -333,7 +334,7 @@
         const topicname=courseUrlParts[3] // The course name is the second part of the URL
 
             // Redirect to the course page using the course name
-        window.location.href = `https://eduflex-inator.onrender.com/${courseName}#${topicname}`;
+        window.location.href = `https://eduflex-inator-1.onrender.com/${courseName}#${topicname}`;
 
       } else {
         // Handle no URL found (optional, display a message or default behavior)
@@ -362,7 +363,7 @@
     };
 
     try {
-        const baseUrl = 'http://localhost:5000';  // Ensure this matches your backend
+        // Ensure this matches your backend
 
         const response = await fetch(`${baseUrl}/updateprofile`, {
             method: 'POST',
