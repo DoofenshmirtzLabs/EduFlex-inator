@@ -127,7 +127,7 @@
         // Function to fetch exam data from the server
         async function fetchExam(toolInputs) {
             try {
-                const response = await fetch('http://localhost:5000/generate-custom-mcq', {
+                const response = await fetch('https://eduflex-inator.onrender.com/generate-custom-mcq', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
