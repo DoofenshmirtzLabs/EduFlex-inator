@@ -88,17 +88,19 @@
         let videoTranscript=null;
         let conversationHistory = [];
 
-        function onYouTubeIframeAPIReady() {
-            const urlParams = new URLSearchParams(window.location.search);
-            videoId = urlParams.get('videoId');
-             // Assign to the global variable
-            console.log("videoId",videoId)
-            if (videoId) {
-                embedYouTubeVideo(videoId);
-            } else {
-                alert('No video selected.');
-            }
+      
+    // Wait for the DOM to load before running the script
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        videoId = urlParams.get('videoId');
+        console.log("videoId", videoId);
+        
+        if (videoId) {
+            embedYouTubeVideo(videoId);
+        } else {
+            alert('No video selected.');
         }
+    });
 
         function embedYouTubeVideo(videoId) {
             new YT.Player('player-container', {
