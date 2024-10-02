@@ -11,7 +11,7 @@ export const authenticate = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, 'chocolate_banana');
+    const decoded = jwt.verify(token, '');
     req.user = await User.findById(decoded.id).select("-password"); // Exclude password
     next();
   } catch (err) {
