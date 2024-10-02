@@ -99,11 +99,12 @@
         <div id="meme-container">
             <img id="meme" src="" alt="Meme GIF">
         </div>
-        <div id="loading-bar-container"></div>
-            <div id="loading-container">
-                <img id="loading-bar" src="https://media.tenor.com/d9-oc__al-QAAAAM/subway-surfers.gif" alt="Loading GIF" />
-            </div>
+       
     </div>
+    <div id="loading-bar-container">
+        <div id="loading-container">
+            <img id="loading-bar" src="https://media.tenor.com/d9-oc__al-QAAAAM/subway-surfers.gif" alt="Loading GIF" />
+        </div>
     </div>
     <script>
         let questions = []; // Will hold the questions fetched from the server
@@ -122,7 +123,7 @@
         }
         async function fetchExamWithTopics(topics) {
             console.log("inside topics function");
-            const num = Array.isArray(topics) ? topics.length : 0;
+            const num = 30;
             
             console.log("topics:", topics);
             console.log("num", num);
@@ -143,7 +144,7 @@
             examData.forEach(questionObj => {
                 questions.push(questionObj);
             });
-            hideLoadingBar()
+            hideLoadingBar();
             displayQuestion();
         } else {
             hideLoadingBar()
@@ -220,7 +221,7 @@
             document.getElementById('exam-question').style.display = 'none';
             document.getElementById('exam-options').style.display = 'none';
             document.getElementById('submit-exam-button').style.display = 'none';
-            if (percentagescore >=20) {
+            if (percentagescore >=0) {
                 window.location.href = `certificate.html?courseName=${courseName}`;
             }
         }

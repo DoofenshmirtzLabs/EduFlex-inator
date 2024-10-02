@@ -131,8 +131,9 @@
               window.location.href = "homepage.html"; // Redirect to homepage
             } else {
               failedAttempts++;
-              alert(data.message);
+              
               changeBackgroundImage(failedAttempts);
+              alert(data.message);
             }
           } catch (error) {
             console.error("Login error:", error);

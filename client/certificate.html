@@ -107,7 +107,7 @@
             // When the document loads, update the certificate content
             window.addEventListener('DOMContentLoaded', function () {
                 const courseName = decodeURIComponent(getQueryParam('courseName'));
-                const userName = "John Doe";  // Change this dynamically if needed
+                const userName = localStorage.getItem("username");  // Change this dynamically if needed
                 if (courseName) {
                     const reason = `for successfully completing the ${courseName} course.`;
                     updateCertificate(userName, courseName, reason);

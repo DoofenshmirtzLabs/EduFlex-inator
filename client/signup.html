@@ -1,27 +1,110 @@
-<!-- client/signup.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Signup</title>
     <style>
-      /* Add your styles here */
+      body {
+        background: linear-gradient(to right, #1e3c72, #2a5298); /* Initial bluish gradient background */
+        color: white; /* Text color */
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Full viewport height */
+        margin: 0; /* Remove default margin */
+        background-size: cover; /* Cover the entire background */
+        background-position: center; /* Center the background image */
+      }
+
+      #signup-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h2 {
+        margin-bottom: 20px; /* Space below the heading */
+        font-size: 24px; /* Login heading size */
+      }
+
+      #signup-form-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #signup-form {
+        background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
+        backdrop-filter: blur(10px); /* Glass effect */
+        padding: 30px; /* Inner padding */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+        border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for glassy effect */
+      }
+
+      input {
+        width: 100%; /* Full width for input fields */
+        padding: 10px; /* Inner padding for inputs */
+        margin-bottom: 15px; /* Space between inputs */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Rounded corners */
+        outline: none; /* Remove outline */
+      }
+
+      input:focus {
+        background-color: rgba(255, 255, 255, 0.3); /* Light background on focus */
+      }
+
+      button {
+        width: 100%; /* Full width for the button */
+        padding: 10px; /* Inner padding for button */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Rounded corners */
+        background-color: #2a5298; /* Button color */
+        color: white; /* Button text color */
+        font-size: 16px; /* Font size */
+        cursor: pointer; /* Pointer cursor on hover */
+        transition: background-color 0.3s; /* Smooth transition */
+      }
+
+      button:hover {
+        background-color: #1e3c72; /* Darker shade on hover */
+      }
+
+      p {
+        margin-top: 20px; /* Space above paragraph */
+        color: white; /* Keep the text white */
+      }
+
+      a {
+        color: #d1e8ff; /* Link color */
+        text-decoration: none; /* Remove underline */
+      }
+
+      a:hover {
+        text-decoration: underline; /* Underline on hover */
+      }
     </style>
   </head>
   <body>
-    <h2>Signup</h2>
-    <form id="signup-form">
-      <input type="text" id="username" placeholder="Username" required /><br />
-      <input type="email" id="email" placeholder="Email" required /><br />
-      <input
-        type="password"
-        id="password"
-        placeholder="Password"
-        required
-      /><br />
-      <button type="submit">Signup</button>
-    </form>
-    <p>Already have an account? <a href="login.html">Login here</a></p>
+    <div id="signup-container">
+      <h2>Signup</h2>
+      <div id="signup-form-container">
+        <form id="signup-form">
+          <input type="text" id="username" placeholder="Username" required /><br />
+          <input type="email" id="email" placeholder="Email" required /><br />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+          /><br />
+          <button type="submit">Signup</button>
+        </form>
+        <p>Already have an account? <a href="index.html">Login here</a></p>
+      </div>
+    </div>
     <script>
       document
         .getElementById("signup-form")
@@ -42,7 +125,7 @@
             const data = await response.json();
             if (response.ok) {
               alert(data.message);
-              window.location.href = "login.html";
+              window.location.href = "index.html";
             } else {
               alert(data.message);
             }

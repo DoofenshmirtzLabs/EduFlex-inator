@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import { router as authRoutes } from "./routes/auth.js";
 import { authenticate } from "./middleware/auth.js";
 import { coursesData } from './tools/topics.js';
+
 dotenv.config();
 console.log(process.env.MONGO_URI)
 const mongoURI = 'mongodb+srv://Vimal:eduflex@cluster0.czyxx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'; // Ensure MONGO_URI is being loaded
@@ -82,7 +83,10 @@ async function decideToolWithGemini(userInput, apiKey) {
 Choose one of the following tools:
   Tool 1: Semantic search(use if users is searching for a topic or an course) (requires a topic name as input).
   Tool 2: Create a custom exam (use it if user is asking to create an custom exam)(requires a topic name, number of questions, and difficulty level - 'easy', 'medium', 'hard').
-Return a valid JSON response. The response **must** only contain two fields: 'tool' and 'input'. 
+  Tool 3: Update user profile (use when the user wants to update their profile) (requires  email, and password).
+
+To select Tool 3, ensure that all three fields ( email, password) are provided. If only two fields are supplied, return null for the input field.
+  Return a valid JSON response. The response **must** only contain two fields: 'tool' and 'input'. 
 
 The format should strictly follow this structure:
 {
@@ -476,6 +480,7 @@ app.post('/generate-custom-mcq',async(req,res)=>{
 
 app.post('/generate-mcq-finalexam', async (req, res) => {
   const { topics, numQuestions, difficultyLevel } = req.body;
+  console.log("topics",topics);
 
   try {
     // Logging the input values to verify the request data
@@ -491,14 +496,20 @@ app.post('/generate-mcq-finalexam', async (req, res) => {
     // Assuming generateMCQTestwithtopics is a valid function that returns an MCQ test based on inputs
     const mcqTest = await generateMCQTestwithtopics(topics, numQuestions, difficultyLevel);
     
-    // Return the generated MCQ test
-    console.log("mcqtest in server:",mcqTest)
+
     res.json(mcqTest);
   } catch (error) {
-    console.error("MCQ Generation Error:", error);
+    try{const mcqTest = await generateMCQTestwithtopics(topics, numQuestions, difficultyLevel);
+    
+    // Return the generated MCQ test
+    console.log("there was an error generating again")
+    res.json(mcqTest)}
+    catch(error){
+      res.status(500).json({ error: "Failed to generate MCQ test", details: error.message });
+    }
 
     // Send an error response with the error message
-    res.status(500).json({ error: "Failed to generate MCQ test", details: error.message });
+   
   }
 });
 // Endpoint to start a conversation
@@ -519,6 +530,7 @@ app.post('/start-conversation', async (req, res) => {
   // Include transcript only in the first conversation
   if (!conversationStarted) {
     updatedPrompt = `${userPrompt} this is the YouTube video that I want to talk about: ${data}`;
+    console.log("updated prompt",updatedPrompt)
     conversationStarted = true; // Set the flag to true after the first conversation
   } else {
     updatedPrompt = `${userPrompt}`;

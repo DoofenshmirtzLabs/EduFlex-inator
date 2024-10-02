@@ -181,7 +181,6 @@
         </div>
     </nav>
 <header>
-    <button id="logout-button">Logout</button>
 </header>
 
 
@@ -223,7 +222,7 @@
     </div>
 
     <div class="course-card">
-        <img src="https://www.simpleimageresizer.com/_uploads/photos/ca8e76e0/unemployed_poster_1_optimized.png" alt="Course Image" class="course-image">
+        <img src="https://i.ibb.co/0BM06gn/unemployed-poster-optimized.png" alt="Course Image" class="course-image">
         <div class="course-content">
             <h3 class="course-title">How to Cope with Unemployment After College</h3>
             <p class="course-description">The Unexpected Twist After College</p>
@@ -292,9 +291,13 @@
             if (toolNumber === 1) {
                 console.log("Calling semantic search");
                 performSearch(toolInput); // Assuming you have this function defined
-            } else if (toolNumber === 2) {
+            }  if (toolNumber === 2) {
                 console.log("Calling custom exam");
                 createcustomexam(toolInput); // Assuming you have this function defined
+            }
+            if(toolNumber === 3){
+                console.log("calling update userprofile function");
+                updateprofile(toolInput);
             }
         } catch (error) {
             console.error("Error in agent function:", error)
@@ -340,6 +343,44 @@
       console.log('Error during search:', error);
     }
   }
+  async function updateprofile(toolInput) {
+    const inputs = JSON.parse(toolInput);  // Parse the JSON string
+    const username = localStorage.getItem("username");
+    console.log("username in homepage:",username)
+    const email = inputs.email;
+    const password = inputs.password;
+
+    if (!username) {
+        alert("Username not found in local storage.");
+        return;
+    }
+
+    const requestBody = {
+        username: username,
+        email: email || null,  // Only include if available
+        password: password || null  // Only include if available
+    };
+
+    try {
+        const baseUrl = 'http://localhost:5000';  // Ensure this matches your backend
+
+        const response = await fetch(`${baseUrl}/updateprofile`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error fetching results: ${response.statusText}`);
+        }
+
+        alert("User profile updated");
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("Failed to update user profile");
+    }
+}
+
         function viewCourse(title, description, imageUrl) {
             // Save course details to session storage
             sessionStorage.setItem('courseTitle', title);
