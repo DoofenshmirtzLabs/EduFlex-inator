@@ -12,7 +12,7 @@ import { coursesData } from './tools/topics.js';
 
 dotenv.config();
 console.log(process.env.MONGO_URI)
-const mongoURI = 'mongodb+srv://Vimal:eduflex@cluster0.czyxx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'; // Ensure MONGO_URI is being loaded
+ // Ensure MONGO_URI is being loaded
 
 if (!mongoURI) {
   console.error("MongoDB connection string is missing");
@@ -33,9 +33,7 @@ mongoose
 
 // Initialize database client
 
-const GEMINI_KEY="AIzaSyD_3qToMzCq4G6vnzO0NGbNq6q-oJPrFDQ"
-const YOUTUBE_API_KEY ="AIzaSyAalKwhBlFVNN7xCIT4tCGFVNwETZhFaPM"
-const ASTRA_DB_KEY='AstraCS:hsFlqHXfDHawTjvRQuygUEYg:f2c4f48e762db3b69c5292780534e6c3d4f8e1ecdb2de603d891d60bb1e26cae'
+
 
 const client = new DataAPIClient(ASTRA_DB_KEY);
 
