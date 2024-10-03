@@ -183,52 +183,23 @@
         }
 
         async function searchYouTubeVideos(searchQuery) {
-    const apiKey = 'AIzaSyAalKwhBlFVNN7xCIT4tCGFVNwETZhFaPM'; // Replace with your YouTube API key
-    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&maxResults=20&key=${apiKey}`;
-
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        // Filter videos to check validity before displaying
-        const validVideos = await checkVideoValidity(data.items);
-        displayThumbnails(validVideos);
-    } catch (error) {
-        console.error('Error fetching YouTube data:', error);
-    }
-}
-
-// Function to check the validity of each video
-async function checkVideoValidity(videos) {
-    const validVideos = [];
-
-    for (const item of videos) {
-        const videoId = item.id.videoId;
-
-        // Check if the video is accessible
-        const isValid = await isVideoAccessible(videoId);
-        if (isValid) {
-            validVideos.push(item);
-        }
-    }
-
-    return validVideos;
-}
-
-// Function to check if a video is accessible
-async function isVideoAccessible(videoId) {
-    const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=AIzaSyAalKwhBlFVNN7xCIT4tCGFVNwETZhFaPM&part=status`;
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
+        const baseUrl = 'https://eduflex-inator.onrender.com';
+            try {
+                const response = await fetch(`${baseUrl}/searchYouTubeVideos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ searchQuery: searchQuery }),
+                });
+                console.log("response from serve",response)
+                const videos = await response.json();
+                console.log("Fetched topics:", videos);
+                displayThumbnails(videos);
+                
+            } catch (error) {
+                console.error('Error fetching topics:', error);
+            }
         
-        // Check if the video status is 'ok'
-        return data.items.length > 0 && data.items[0].status.privacyStatus !== 'private';
-    } catch (error) {
-        console.error('Error checking video validity:', error);
-        return false; // If there's an error, consider it invalid
-    }
-}
+       }
 
 function displayThumbnails(videos) {
     const container = document.getElementById('thumbnails-container');
